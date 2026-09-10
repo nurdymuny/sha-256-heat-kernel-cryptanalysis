@@ -8,7 +8,7 @@ Three-part analysis:
 3. DEEP STRUCTURAL ANALYSIS - Characterize the curves
 
 Author: Bee Davis
-Classification: CONFIDENTIAL
+Classification: legacy exploratory research code, superseded by the audited publication path; see review/SHA256_SUBMISSION_REVIEW.md
 """
 
 import numpy as np

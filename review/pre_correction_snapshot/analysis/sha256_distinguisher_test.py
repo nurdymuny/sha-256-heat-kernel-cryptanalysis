@@ -9,7 +9,7 @@ If YES → Random oracle assumption violated → Real cryptographic weakness
 If NO  → Geometric fingerprint is internal only → Not exploitable
 
 Author: Bee Davis
-Classification: CONFIDENTIAL
+Classification: legacy exploratory research code, superseded by the audited publication path; see review/SHA256_SUBMISSION_REVIEW.md
 """
 
 import numpy as np

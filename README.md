@@ -10,6 +10,9 @@ This repository is the complete record of the study: the manuscript and the scri
 - arXiv source: [`publication/release/arxiv_source.zip`](publication/release/arxiv_source.zip)
 - Reproducibility archive: [`publication/release/sha256_reproducibility.zip`](publication/release/sha256_reproducibility.zip), with [`manifest.json`](publication/release/manifest.json) and [`package_validation.json`](publication/release/package_validation.json)
 - Numbers digest: [`RESULTS.md`](RESULTS.md)
+- Reviewer guide (run and check everything in about fifteen minutes): [`REVIEWER_GUIDE.md`](REVIEWER_GUIDE.md)
+- Instructions for coding agents working in this repository: [`AGENTS.md`](AGENTS.md)
+- License: MIT ([`LICENSE`](LICENSE))
 
 ## What the paper does and finds
 
@@ -116,6 +119,10 @@ Every step is dated in the receipts' `environment.json` and `completion.json` fi
 ## What is not in this repository
 
 Separate manuscripts on the dual-torus and double-cover formulations, the December 2025 carry-field tomography outputs, and the exploratory thermocline, resonant-tunnel and algebraic-search branches are not part of this paper and are not included. Nothing in this repository establishes or claims an attack on SHA-256.
+
+## License
+
+The contents of this repository are released under the MIT License (see [`LICENSE`](LICENSE)). The license under which the paper itself is distributed by a preprint server or data repository is chosen at deposit.
 
 ## Citation
 

@@ -10,7 +10,7 @@ Four targeted attacks based on heat kernel analysis findings:
 4. Subspace "Pancake" Probe - find dimensional collapse
 
 Author: Bee Davis
-Classification: CONFIDENTIAL - CRYPTANALYTIC RESEARCH
+Classification: legacy exploratory research code, superseded by the audited publication path; see review/SHA256_SUBMISSION_REVIEW.md
 """
 
 import numpy as np
