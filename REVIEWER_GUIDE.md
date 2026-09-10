@@ -2,7 +2,7 @@
 
 This guide takes you from a clone to an independent check of every number in the paper. The minimum path (steps 1 to 3) takes about five minutes and needs only Python. Rebuilding the PDF (step 4) needs `pdflatex`. Re-running experiments from scratch (step 5) takes a few minutes more.
 
-Every measured quantity in the paper enters through macros that `publication/derived.py` computes from the receipts under `publication/evidence/`; design constants such as sample sizes and rounds are typed. `publication/verify_evidence.py` recomputes each receipt's summaries from its raw arrays and regenerates both macro files and the four table files, requiring byte equality with the files on disk. So a reviewer can check the chain at three points: the raw arrays, the summaries, and the manuscript macros.
+Every measured quantity in the paper enters through macros that `publication/derived.py` computes from the receipts under `publication/evidence/`; design constants such as sample sizes and rounds are typed. `publication/verify_evidence.py` recomputes each receipt's summaries from its raw arrays and regenerates both macro files and the four table files, requiring decoded-text equality with the files on disk. So a reviewer can check the chain at three points: the raw arrays, the summaries, and the manuscript macros.
 
 ## 1. Clone and install
 
@@ -25,7 +25,7 @@ The repository stores every file byte-exactly (`.gitattributes` sets `* -text`).
 python -m pytest tests -q
 ```
 
-Expected: `46 passed`. The tests establish that the primitive is SHA-256 (FIPS 180-4 vectors and `hashlib` agreement at padding boundaries up to 128 bytes), that the vectorized raw-block compression used for every measurement matches the scalar reference round by round, that input coordinates are placed where the paper says (MSB-first within each byte, word index = bit // 32), that a variable in W15 cannot influence the state before round 16, that the graph normalization keeps tiny positive degrees and is scale invariant, that full heat traces obey the truncation bound, that the legacy anomaly detector no longer rejects an exact match to its own null, that no continuum curvature is inferred, that the follow-up and matched-control constructions are what the paper describes, and that the bootstrap interval, Holm and rank-bootstrap helpers agree with hand-computed cases.
+Expected: `53 passed`. The tests establish that the primitive is SHA-256 (FIPS 180-4 vectors and `hashlib` agreement at padding boundaries up to 128 bytes), that the vectorized raw-block compression used for every measurement matches the scalar reference round by round, that input coordinates are placed where the paper says (MSB-first within each byte, word index = bit // 32), that a variable in W15 cannot influence the state before round 16, that the graph normalization keeps tiny positive degrees and is scale invariant, that full heat traces obey the truncation bound, that the legacy anomaly detector no longer rejects an exact match to its own null, that no continuum curvature is inferred, that the follow-up and matched-control constructions are what the paper describes, that the bootstrap interval, Holm and rank-bootstrap helpers agree with hand-computed cases, and that inconsistent reported effect means are rejected even when generated macros agree with them. These fault-injection tests alter only in-memory views of receipts; they never write frozen evidence.
 
 ## 3. Run the verifier (about ten seconds)
 
@@ -45,7 +45,8 @@ Expected: a JSON block with `"passed": true` and 20 check names. The verifier re
 - the exact round-one MSB observation on every base of both original partitions;
 - the matched-control family: identical bases and candidate arrays to the follow-up, pool membership, per-set means and rates, intervals and counts, and the uniform-control diagnostics;
 - the SHA-256 hash of every source file that a receipt records, against the file as stored;
-- both macro files and the four table files, regenerated from the receipts through `publication/derived.py` and required to match byte for byte, which covers the heat-trace, early-coordinate, noise-floor, rank-bootstrap and cluster-size numbers that appear only in the manuscript;
+- all displayed effect means, recomputed directly from per-base arrays or per-dataset records;
+- both macro files and the four table files, regenerated from the receipts through `publication/derived.py` and required to match as decoded text, which covers the heat-trace, early-coordinate, noise-floor, rank-bootstrap and cluster-size numbers that appear only in the manuscript;
 - the graph summary means, the primary, confirmation and sensitivity detour intervals, cluster sizes against saved labels, and the avalanche, search and classifier summary means and ranges.
 
 What it does not do: it does not re-run eigensolvers, k-means or classifier training (it checks the saved spectra's zero mode, ordering and count, and recomputes everything downstream of the saved arrays), and its bootstrap and Holm routines are the study's own, from `analysis/publication_study.py`, unit-tested in `tests/test_publication_stats.py`. It therefore establishes consistency between arrays, receipts and manuscript, not an independent re-implementation of those two routines.
@@ -148,4 +149,4 @@ print(q['round'], q['candidate_zero_rate'], sum(r >= q['candidate_zero_rate'] fo
 
 ## 9. What is and is not being claimed
 
-The paper reports bounded negative results for the tested procedures, one reproducible early-round position effect with an exact algebraic explanation at round 1, and the finding that a previously proposed candidate set's advantage over uniform controls is largely an effect of bit significance, with its residual round-2 cube contrast reported as unresolved. It does not claim an attack, a distinguisher, a security proof, intrinsic curvature, or a topological model. `review/` documents the December 2025 claims that preceded this work and why they were withdrawn.
+The paper reports bounded negative results for the tested procedures, one reproducible early-round position effect with an exact algebraic explanation at round 1, and the finding that a previously proposed candidate set's advantage over uniform controls is largely an effect of bit significance, with a resolved contrast against the sampled matched-control mean and no established explanation for that residual difference. It does not claim an attack, a distinguisher, a security proof, intrinsic curvature, or a topological model. `review/` documents the December 2025 claims that preceded this work and why they were withdrawn.

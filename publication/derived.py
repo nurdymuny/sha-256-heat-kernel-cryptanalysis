@@ -4,7 +4,7 @@ Every macro in numbers.tex and followup_numbers.tex, and every row of the four
 table files, is produced here. publication/build_paper.py and
 publication/followup_tables.py write the files from these functions, and
 publication/verify_evidence.py regenerates them from the receipts and requires
-byte equality with the files on disk. Design constants (sample sizes, rounds,
+decoded-text equality with the files on disk. Design constants (sample sizes, rounds,
 seeds) are typed in the manuscript; every measured quantity passes through here.
 """
 from pathlib import Path
@@ -36,6 +36,13 @@ def rank_bootstrap(candidate, controls, relation, seed=915, resamples=5000, chun
         counts.append(((sm >= cm) if relation == 'ge' else (sm < cm)).sum(0))
     lo, hi = np.quantile(np.concatenate(counts), [.025, .975])
     return int(round(lo)), int(round(hi))
+
+
+def interval_counts(records, min_round=0):
+    """Count intervals containing zero over explicitly selected sampled rounds."""
+    rows = [r for r in records if r["round"] >= min_round]
+    exceptions = [r["round"] for r in rows if not r["difference"]["ci95"][0] <= 0 <= r["difference"]["ci95"][1]]
+    return {"total": len(rows), "contains_zero": len(rows) - len(exceptions), "exceptions": exceptions}
 
 
 def primary_macros(E):
@@ -108,6 +115,10 @@ def followup_macros(E):
     v = q['records'][0]
     macros.update({'EarlyCubeTarget': f"{100*v['target_mean']:.2f}", 'EarlyCubeControl': f"{100*v['control_mean']:.2f}",
                    'EarlyCubeDifference': f"{100*v['difference']['mean']:.2f}", 'EarlyCubeCI': ci3(v['difference'], 100), 'EarlyCubeP': pformat(v['holm_p'])})
+    later = interval_counts(mq['records'], min_round=3)
+    macros.update({'MatchedCubeLaterCount': str(later['total']),
+                   'MatchedCubeLaterZeroCount': str(later['contains_zero']),
+                   'MatchedCubeLaterExceptions': ', '.join(map(str, later['exceptions']))})
     m2 = ms['records'][0]; c2 = mq['records'][0]
     macros.update({'MatchedSearchDiffTwo': f"{m2['difference']['mean']:+.2f}", 'MatchedSearchCITwo': ci2(m2['difference']),
                    'MatchedSearchBelowTwo': str(m2['matched_sets_below_candidate']),

@@ -12,7 +12,7 @@ Working paper, 9 September 2026. Not yet submitted; no DOI has been assigned.
 
 ## For the mathematical reader
 
-This is an experimental paper in the manner of computational mathematics. The objects are defined exactly (Section 1 below), six elementary statements are stated and used, five with one-line proofs and one cited (Section 2, numbered as in the paper), and everything else is a measurement with a declared resampling unit, a frozen receipt, and an independent verifier that recomputes it from raw arrays (Sections 3 and 4). The paper claims no theorem about SHA-256 beyond those elementary statements, no attack, no distinguisher, no security proof, and no intrinsic curvature or topology of the state space. What it establishes is a fully specified way to ask geometric questions of a hash function's working state, a set of bounded negative answers, one exact positive answer at round one, and a demonstration that an earlier claimed candidate set's advantage over uniform controls is largely an effect of bit significance, with its residual round-2 cube contrast reported as unresolved.
+This is an experimental paper in the manner of computational mathematics. The objects are defined exactly (Section 1 below), six elementary statements are stated and used, five with one-line proofs and one cited (Section 2, numbered as in the paper), and everything else is a measurement with a declared resampling unit, a frozen receipt, and an independent verifier that recomputes it from raw arrays (Sections 3 and 4). The paper claims no theorem about SHA-256 beyond those elementary statements, no attack, no distinguisher, no security proof, and no intrinsic curvature or topology of the state space. What it establishes is a fully specified way to ask geometric questions of a hash function's working state, a set of bounded negative answers, one exact positive answer at round one, and a demonstration that an earlier claimed candidate set's advantage over uniform controls is largely an effect of bit significance, with a resolved contrast against the sampled matched-control mean and no established explanation for that residual difference.
 
 The repository also preserves the December 2025 manuscript's code and claims (`review/pre_correction_snapshot/`) and the audit that withdrew them. Section 5 states each withdrawn claim and the mathematical error behind it, because a reader of the present paper is entitled to know what it replaced.
 
@@ -106,7 +106,7 @@ The receipts record $A_1(m,0)=2$ on all 256 bases of both partitions (a verifier
 
 *Proof.* The first line is the definition of the round map; the derivatives are of the same functions; $a_{r'}$, $e_{r'}$ do not depend on $W_j$ for $r'\le j$; and the $2^{|S|}$-fold XOR of a word that does not depend on $S$ vanishes because $S\ne\varnothing$. $\square$
 
-The consequence is that a zero cube sum in a trailing register shortly after the variables enter is transport, not algebraic simplicity. The verifier checks the identities as exact array equalities on the entry-control receipts, and the entry-control figure in the paper shows precisely this staircase.
+Before the bounds in Proposition 6 are exceeded, trailing-register cube sums vanish by transport and input independence. Later zeros require analysis of the leading-word response; transport alone does not determine their rates. The verifier checks the identities as exact array equalities on the entry-control receipts, and the entry-control figure in the paper shows precisely this staircase.
 
 ## 3. Statistical protocol
 
@@ -135,11 +135,11 @@ Every entry is regenerated from `publication/evidence/` by the build scripts and
 | Two-bit search minimum, round 2, candidate minus uniform / minus matched controls | −1.22 [−1.65, −0.79] / +1.55 [+1.14, +1.96]; 36 of 40 matched sets below the candidate; uniform-control means correlate 0.50 with mean offset |
 | Six-bit cube zero rate of $[a_r]_{16}$, rounds 8 to 24, candidate minus uniform controls | all eight intervals contain zero; no Holm-adjusted rejection |
 | Same at round 2 | candidate 90.43 %; uniform controls 72.29 % (sets 50.98 to 96.09 %); matched controls 86.08 % (sets 49.6 to 94.9 %): candidate minus matched mean +4.35 points [+1.8, +6.8], a resolved contrast against the mean, while 19 of 40 matched sets lie at or above the candidate (base-bootstrap bounds 13 to 26); whole-word $\Delta_S a_2=0$ for 0.20 % of bases |
-| Same, rounds 3 to 24 | uniform family: all intervals contain zero; matched family: thirteen of fourteen contain zero, the exception being round 7, +4.86 [+0.4, +9.3] points, an isolated unadjusted contrast awaiting confirmation |
+| Same, rounds 3 to 24 | uniform family: all intervals contain zero; matched family: twelve of the thirteen intervals at sampled rounds after round 2 contain zero, the exception being round 7, +4.86 [+0.4, +9.3] points, an isolated unadjusted contrast awaiting confirmation |
 | Transport identities on the entry control | exact equalities; staircase of zero sums as in Proposition 6 |
 | Digest classifiers, five independent fits | random forest 50.315 % (49.825 to 51.050, AUC 0.502); PCA + SVM 49.800 % (48.225 to 51.425, AUC 0.500) |
 
-Interpretation, in the paper's own terms: none of the tested graph statistics (silhouette, spectral gap, sixteen heat-trace comparisons) resolves a SHA-specific difference, and the small detour contrast seen in two groups was not reproduced in two further samples; the whole state saturates about six rounds after a variable enters; the round-24 selection resolves no persistent lower-distance advantage, its position spread being consistent with sampling-scale variation; there is reproducible position dependence within a word in the first five rounds, exact at round 1; against significance-matched controls the candidate's search advantage reverses and its round-2 cube rate, though above the matched mean, lies within the spread of that class; and cube sums in trailing registers say only what Proposition 6 says.
+Interpretation, in the paper's own terms: the spectral-gap and sixteen heat-trace intervals include zero; the primary silhouette contrast does not repeat in confirmation, and the small detour contrast seen in two groups was not reproduced in two further samples; the whole state saturates about six rounds after a variable enters; the round-24 selection resolves no persistent lower-distance advantage, its position spread being consistent with sampling-scale variation; there is reproducible position dependence within a word in the first five rounds, exact at round 1; against significance-matched controls the candidate's search advantage reverses and its round-2 cube rate, though above the matched mean, lies within the spread of that class; and Proposition 6 explains transport delays in trailing-register cube sums without determining all later zero rates.
 
 ## 5. What the earlier version claimed, and the error behind each claim
 
@@ -148,7 +148,7 @@ The December 2025 manuscript (*Heat Kernel Cryptanalysis on the Davis Manifold: 
 1. *Silhouette 0.995 versus −0.574 for random.* The comparator was random labels on the SHA coordinates, not an independent random population through the same pipeline. With the correct comparator the values are 0.896 versus 0.907. The large value is partition fragmentation: at $h=1$ the neighbour Hamming distances lie in roughly $[104,115]$, so the weights $e^{-d_H/4}$ span a factor of about 25 across a node's neighbour list, the nearest neighbour carries about a fifth of each degree, and the fitted partition is one cluster of about 502 points and four of 2 to 4.
 2. *Graph normalization.* Degrees at or below $10^{-10}$ were treated as zero. At $h=1$ every degree is of that order, so almost every vertex was declared isolated, the zero mode disappeared, and the smallest eigenvalue of a connected graph was reported as 0.24. The corrected normalization satisfies Proposition 1.
 3. *Structure detected at every round with $p=0$.* Ordered eigenvalues were standardized by per-mode null moments and tested as i.i.d. standard normal by a Kolmogorov–Smirnov statistic; the detector rejected an exact copy of its own null at $p\approx4\times10^{-12}$. No replacement claim is made.
-4. *22 slow bits in register $a$ aligned with $\Sigma_0$.* The 22 indices were input-message coordinates, not register bits, and the selection was the bottom fifth percentile of 440 rates by construction. On fresh bases the selection has no effect at round 24 (Section 4), and the candidate's early behaviour is bit significance (Section 4).
+4. *22 slow bits in register $a$ aligned with $\Sigma_0$.* The 22 indices were input-message coordinates, not register bits, and the selection was the bottom fifth percentile of 440 rates by construction. On fresh bases no lower-distance selection effect is resolved at round 24 (Section 4). Matching bit significance reverses the early search advantage, while the round-2 cube rate remains above the sampled matched-control mean (Section 4).
 5. *Slow pairs at −35σ.* Two-bit distances were divided by $\sqrt2$ and compared with an unscaled one-bit baseline; the scaling alone produces −32.6σ on the baseline itself. The matched, equal-budget comparison gives +0.13 bits [−0.44, +0.67].
 6. *A geometry-guided cube attack breaking $c,d,g,h$ at round 17 and $d,h$ at round 18.* The cube scripts serialized integer bit $b$ big-endian, placing it in $W_{15-\lfloor b/32\rfloor}$; the "W0/W1" variables were in $W_{15}$ and $W_{14}$ and first affected the state at completed rounds 16 and 15 respectively. The trailing-register zeros are Proposition 6. The companion draft's degree threshold $2^k$ is also wrong; the correct threshold is $k$ (Lemma 5).
 7. *Heat-trace and curvature statements.* Traces were computed from 50 of 256 modes, giving $Z(0.01)=49.7$ where the full value is 253.5 (Proposition 2). The "curvature" was $6(\rho-1)/(t_2-t_1)$ for a two-time diagonal ratio $\rho=K_{t_2}(i,i)/K_{t_1}(i,i)\le1$, hence nonpositive by Proposition 3, and a Poincaré placement imposed the sign it reported.
@@ -173,7 +173,7 @@ publication/
 src/                              instrumented scalar SHA-256, vectorized raw-block compression, graph and heat-kernel code
 analysis/publication_*.py         the five runners behind the paper
 analysis/*.py (others)            December 2025 exploratory scripts, superseded; not used by the paper
-tests/                            46 tests
+tests/                            53 tests
 review/                           audit, closeouts, frozen snapshots, reviewer receipts
 ```
 
@@ -189,7 +189,7 @@ review/                           audit, closeouts, frozen snapshots, reviewer r
 
 ```
 python -m pip install -r publication/release/requirements.txt
-python -m pytest tests -q                 # 46 passed
+python -m pytest tests -q                 # 53 passed
 python publication/verify_evidence.py     # passed, 20 checks
 python publication/build_paper.py         # rebuild figures, tables, macros, PDF
 python publication/make_release.py        # archives, manifest, RESULTS.md

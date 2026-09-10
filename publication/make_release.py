@@ -2,6 +2,9 @@
 from pathlib import Path
 import json,hashlib,zipfile,subprocess,importlib.metadata,sys
 ROOT=Path(__file__).resolve().parents[1];P=ROOT/'publication';R=P/'release';R.mkdir(exist_ok=True)
+from derived import interval_counts
+later=interval_counts(json.loads((P/'evidence/matched/cubes.json').read_text())['records'], min_round=3)
+later_summary=f"{later['contains_zero']} of the {later['total']} intervals at sampled rounds after round 2 contain zero"
 subprocess.run([sys.executable,str(P/'verify_evidence.py')],cwd=ROOT,check=True)
 tests=subprocess.run([sys.executable,'-m','pytest','tests','-q'],cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,encoding='utf-8')
 (P/'test_results.txt').write_text(tests.stdout,encoding='utf-8')
@@ -64,7 +67,7 @@ All numerical tables and figures are generated from `publication/evidence/` by `
 - Large graph silhouettes occur in SHA and random data and accompany highly unbalanced fitted partitions at narrow bandwidth. The small primary silhouette contrast does not repeat. Small negative detour contrasts appear in two cohorts but are not reproduced in a further 100-pair author run; the prior 20-pair sensitivity sample is retained.
 - W0 discovery-holdout correlations are 0.930-0.979 across rounds 1-5. The MSB intervention changes exactly two state bits at round 1; the paper gives the modular-addition explanation.
 - Fresh equal-budget searches: against twenty uniform W0 control sets the candidate minimum is lower at rounds 2-5 (unadjusted paired intervals below zero); against forty significance-matched control sets (offsets 0-14, same bases) the difference reverses, +1.55 bits [+1.14, +1.96] at round 2, with 36 of 40 matched sets below the candidate. Uniform-control means correlate 0.50 with the sets' mean offset at round 2. The early distance reduction against uniform controls is largely an effect of bit significance.
-- Fresh six-bit cube tests at round 2: candidate zero rate 90.43% versus 72.29% for uniform controls (twenty sets ranging 50.98% to 96.09%). Against forty significance-matched sets (49.6% to 94.9%, mean 86.08%) the candidate remains above the matched mean, +4.35 points [+1.8, +6.8], but is not exceptional among individual sets: 19 of 40 lie at or above it (base-bootstrap bounds 13 to 26 on that count). The whole-word sum of register a is zero for 0.2% of bases. Against the uniform family, rounds 3-24 resolve no difference; against the matched family thirteen of fourteen intervals contain zero, the exception being round 7 (+4.86 [+0.4, +9.3] points), an isolated unadjusted contrast that requires confirmation. Holm adjustment covers the fourteen candidate-versus-one-half tests as a separate family and does not adjust the candidate-versus-control comparisons.
+- Fresh six-bit cube tests at round 2: candidate zero rate 90.43% versus 72.29% for uniform controls (twenty sets ranging 50.98% to 96.09%). Against forty significance-matched sets (49.6% to 94.9%, mean 86.08%) the candidate remains above the matched mean, +4.35 points [+1.8, +6.8], but is not exceptional among individual sets: 19 of 40 lie at or above it (base-bootstrap bounds 13 to 26 on that count). The whole-word sum of register a is zero for 0.2% of bases. Against the uniform family, rounds 3-24 resolve no difference; against the matched family __MATCHED_LATER_COUNTS__, the exception being round 7 (+4.86 [+0.4, +9.3] points), an isolated unadjusted contrast that requires confirmation. Holm adjustment covers the fourteen candidate-versus-one-half tests as a separate family and does not adjust the candidate-versus-control comparisons.
 - Across 112,640 one-bit interventions, the 22 frozen discovery-selected positions have a held-out selected-minus-other difference of +0.0088 Hamming bits, 95% base-bootstrap interval [-0.2869, 0.3140].
 - Equal-budget two-bit search gives a candidate-minus-mean-control difference of +0.1262 bits, interval [-0.4354, 0.6657], over 256 new bases.
 - For the original six-bit cube experiment, all eight candidate-minus-control intervals include zero, and no candidate-versus-one-half test rejects after Holm adjustment. These are bounded findings for a specified output bit and candidate set.
@@ -72,7 +75,7 @@ All numerical tables and figures are generated from `publication/evidence/` by `
 - Actual digest classifiers average 50.315% accuracy for RF and 49.800% for train-only PCA plus SVM across five independent fits each.
 
 These measurements do not establish cryptographic security, general indistinguishability, intrinsic curvature, or an attack improvement. Verify the saved records with `python publication/verify_evidence.py`. Historical findings and source are retained internally in `review/pre_correction_snapshot/`.
-''',encoding='utf-8')
+'''.replace('__MATCHED_LATER_COUNTS__', later_summary),encoding='utf-8')
 
 files={}
 def include(path,arc=None):

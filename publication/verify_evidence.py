@@ -9,6 +9,10 @@ from scipy.stats import binomtest
 E=ROOT/'publication/evidence'
 def read(p):return json.loads((E/p).read_text())
 def same(x,y):np.testing.assert_allclose(x,y,rtol=1e-10,atol=1e-10)
+def check_effect_mean(values, reported):
+    np.testing.assert_allclose(np.asarray(values, dtype=float).mean(), reported,
+                               rtol=1e-10, atol=1e-10,
+                               err_msg="reported effect mean differs from per-unit values")
 checks=[]
 for path in ['graphs.json','confirmation/graphs.json']:
     data=read(path)
@@ -39,6 +43,7 @@ q=np.load(E/'cubes.npz');qj=read('cubes.json');pv=[]
 for j,row in enumerate(qj['records']):
     t=q['zero_indicators'][0,:,j];c=q['zero_indicators'][1:,:,j].mean(axis=0)
     same(t.mean(),row['target_zero_rate']);same(c.mean(),row['control_zero_rate'])
+    check_effect_mean(t.astype(float)-c, row['difference']['mean'])
     same(interval(t.astype(float)-c)['ci95'],row['difference']['ci95'])
     pv.append(binomtest(int(t.sum()),512,.5).pvalue)
 same(holm(pv),[r['holm_p'] for r in qj['records']]);checks.append('cubes: indicators, intervals and Holm adjustment')
@@ -72,6 +77,7 @@ assert fs['pattern_scores'].shape==(21,256,15,7)
 for j,row in enumerate(sj['records']):
     values=fs['scores'][:,:,j];d=values[0].astype(float)-values[1:].mean(0)
     same(values[0].mean(),row['target_mean']);same(values[1:].mean(),row['control_mean'])
+    check_effect_mean(d, row['difference']['mean'])
     same(interval(d)['ci95'],row['difference']['ci95'])
 checks.append('follow-up search: all 15 patterns, minima and paired intervals')
 fq=np.load(E/'followup/cubes.npz');qj=read('followup/cubes.json');pv=[]
@@ -80,6 +86,7 @@ assert fq['word_sums'].shape==(21,512,14,8)
 for j,row in enumerate(qj['records']):
     values=fq['zero_indicators'][:,:,j];d=values[0].astype(float)-values[1:].mean(0)
     same(values[0].mean(),row['target_mean']);same(values[1:].mean(),row['control_mean'])
+    check_effect_mean(d, row['difference']['mean'])
     same(interval(d)['ci95'],row['difference']['ci95'])
     pv.append(binomtest(int(values[0].sum()),512,.5).pvalue)
 same(holm(pv),[r['holm_p'] for r in qj['records']])
@@ -100,7 +107,8 @@ checks.append('follow-up cubes: full words, indicators, Holm family and independ
 z=read('followup/detour.json')
 assert [r['seed'] for r in z['records']]==list(range(263910,264010))
 for k,v in z['summary'].items():
-    left,right=k.split(' minus ');same(interval([r[left]-r[right] for r in z['records']])['ci95'],v['ci95'])
+    left,right=k.split(' minus ');d=[r[left]-r[right] for r in z['records']]
+    check_effect_mean(d, v['mean']);same(interval(d)['ci95'],v['ci95'])
 checks.append('100 fresh detour pairs: seed range and all five intervals')
 assert np.all(a['discovery'][:,0,0]==2) and np.all(a['holdout'][:,0,0]==2)
 checks.append('exact round-one MSB observation in both original partitions')
@@ -118,6 +126,7 @@ np.testing.assert_array_equal(ms['blocks'],fs['blocks']);np.testing.assert_array
 for j,row in enumerate(msj['records']):
     values=ms['scores'][:,:,j];cand=values[0].astype(float);ctrl=values[1:]
     same(cand.mean(),row['candidate_mean']);same(ctrl.mean(),row['matched_mean']);same(ctrl.mean(1),row['set_means'])
+    check_effect_mean(cand-ctrl.mean(0), row['difference']['mean'])
     same(interval(cand-ctrl.mean(0))['ci95'],row['difference']['ci95'])
     assert row['matched_sets_below_candidate']==int((ctrl.mean(1)<cand.mean()).sum())
 checks.append('matched search: identical bases and candidate scores, pool membership, per-set means, intervals and counts')
@@ -128,6 +137,7 @@ np.testing.assert_array_equal(mq['blocks'],fq['blocks']);np.testing.assert_array
 for j,row in enumerate(mqj['records']):
     values=mq['zero_indicators'][:,:,j];cand=values[0].astype(float);ctrl=values[1:];rates=ctrl.mean(1)
     same(cand.mean(),row['candidate_zero_rate']);same(ctrl.mean(),row['matched_zero_rate']);same(rates,row['set_rates'])
+    check_effect_mean(cand-ctrl.mean(0), row['difference']['mean'])
     same(interval(cand-ctrl.mean(0))['ci95'],row['difference']['ci95']);same([rates.min(),rates.max()],row['matched_range'])
     assert row['matched_sets_at_or_above_candidate']==int((rates>=cand.mean()).sum())
     same((mq['word_sums'][0,:,j,0]==0).mean(),row['whole_word_a_zero']['candidate']);same((mq['word_sums'][1:,:,j,0]==0).mean(),row['whole_word_a_zero']['matched'])
@@ -166,7 +176,9 @@ checks.append('sensitivity detour: all five means and intervals recomputed from 
 aj0=read('avalanche.json');sel=a['selected'];rest=np.setdiff1d(np.arange(440),sel)
 same((a['holdout'][:,sel,23].mean(axis=1)-a['holdout'][:,rest,23].mean(axis=1)).mean(),aj0['holdout_selected_minus_others']['mean'])
 w0s=sel[sel<32];w0r=np.setdiff1d(np.arange(32),w0s)
-same(interval(a['holdout'][:,w0s,23].mean(axis=1)-a['holdout'][:,w0r,23].mean(axis=1))['ci95'],aj0['holdout_word0_selected_minus_others']['ci95'])
+w0diff=a['holdout'][:,w0s,23].mean(axis=1)-a['holdout'][:,w0r,23].mean(axis=1)
+check_effect_mean(w0diff,aj0['holdout_word0_selected_minus_others']['mean'])
+same(interval(w0diff)['ci95'],aj0['holdout_word0_selected_minus_others']['ci95'])
 sj0=read('search.json');same(s['target'].mean(),sj0['target_mean_min_hamming']);same(s['controls'].mean(),sj0['control_mean_min_hamming'])
 same((s['target']-s['controls'].mean(axis=0)).mean(),sj0['target_minus_mean_control']['mean'])
 for name in ['RF','PCA_SVM']:
