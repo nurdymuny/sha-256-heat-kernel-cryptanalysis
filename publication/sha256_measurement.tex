@@ -1,7 +1,7 @@
 \documentclass[11pt]{article}
 \usepackage[margin=0.9in]{geometry}
 \usepackage[T1]{fontenc}
-\usepackage{lmodern,microtype,amsmath,amssymb,booktabs,graphicx,array,float}
+\usepackage{lmodern,microtype,amsmath,amssymb,amsthm,booktabs,graphicx,array,float}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 \hypersetup{pdftitle={Heat-Kernel Cryptanalysis of SHA-256: A Geometric Study of State Evolution},pdfauthor={Bee Rosa Davis},pdfkeywords={SHA-256, heat-kernel cryptanalysis, spectral geometry, state evolution, avalanche effect, higher-order differentials}}
 \usepackage[font=small,labelfont=bf]{caption}
@@ -16,13 +16,15 @@
 \renewcommand{\floatpagefraction}{0.8}
 \input{numbers.tex}
 \input{followup_numbers.tex}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}[proposition]{Lemma}
 \title{Heat-Kernel Cryptanalysis of SHA-256:\\A Geometric Study of State Evolution}
 \author{Bee Rosa Davis\\Davis Geometric\\\small \href{mailto:bee_davis@alumni.brown.edu}{bee\_davis@alumni.brown.edu}\\\small ORCID: \href{https://orcid.org/0009-0009-8034-4308}{0009-0009-8034-4308}}
 \date{9 September 2026\\\small Working paper}
 \begin{document}
 \maketitle
 \begin{abstract}
-How does a structured computation spread a local change through its state, and what can the geometry of that process tell us? This heat-kernel investigation of SHA-256 finds no resolved mean heat-trace difference at the sixteen tested comparisons and no round-24 candidate advantage, while identifying reproducible early-round coordinate effects. Actual-digest classifiers average \RFAccuracy\% and \SVMAccuracy\% accuracy. Weighted graphs and their full Laplacian spectra describe sampled-state geometry; coordinate interventions and Boolean cube tests connect the investigation to the round computation. Within the first message word, discovery--holdout correlations of mean one-bit response are 0.930--0.979 across rounds 1--5. The most-significant-bit intervention changes exactly two state bits at round 1, as modular addition predicts. Against control sets drawn uniformly from W0, a previously proposed six-position candidate shows smaller early search distances and a higher round-2 cube zero rate; against control sets matched on bit significance, the search difference reverses and the cube rate lies inside the control range, so the candidate has no resolved advantage. Early response depends on bit position, not on this candidate, and these early effects do not establish a collision or preimage attack. Entry-aligned cube measurements agree with the specified register-transport identities. High spectral silhouette at narrow bandwidth accompanies highly unbalanced partitions in both SHA and random data; the earlier small detour contrast is not reproduced in 100 further pairs. The contribution is a geometric investigative method with measured early-round structure and explicitly bounded tests of cryptanalytic use.
+How does a structured computation spread a local change through its state, and what can the geometry of that process tell us? This heat-kernel investigation of SHA-256 finds no resolved mean heat-trace difference at the sixteen tested comparisons and no round-24 candidate advantage, while identifying reproducible early-round coordinate effects. Actual-digest classifiers average \RFAccuracy\% and \SVMAccuracy\% accuracy. Weighted graphs and their full Laplacian spectra describe sampled-state geometry; coordinate interventions and Boolean cube tests connect the investigation to the round computation. Within the first message word, discovery--holdout correlations of mean one-bit response are 0.930--0.979 across rounds 1--5. The most-significant-bit intervention changes exactly two state bits at round 1, as modular addition predicts. Against control sets drawn uniformly from W0, a previously proposed six-position candidate shows smaller early search distances and a higher round-2 cube zero rate; against control sets matched on bit significance, the search difference reverses and the cube rate lies inside the control range, so the candidate has no resolved advantage. Early response depends on bit position, not on this candidate, and these early effects do not establish a collision or preimage attack. Entry-aligned cube measurements agree with the exact register-transport identities. High spectral silhouette at narrow bandwidth accompanies highly unbalanced partitions in both SHA and random data; the earlier small detour contrast is not reproduced in 100 further pairs. The contribution is a geometric investigative method with measured early-round structure and explicitly bounded tests of cryptanalytic use.
 \end{abstract}
 \noindent\textbf{Keywords:} SHA-256; heat-kernel cryptanalysis; spectral geometry; state evolution; avalanche effect; higher-order differentials.
 
@@ -74,7 +76,13 @@ Binary working states are embedded in $\mathbb R^{256}$ without fitted dimension
 \end{equation}
 We study $h=1$ and $h=8$ with identical settings for SHA states and independently sampled random bits. With $d_i=\sum_jW_{ij}>0$, the symmetric normalized Laplacian is
 \begin{equation}L=I-D^{-1/2}WD^{-1/2}.\end{equation}
-Its zero eigenvector is proportional to $\sqrt d$; a common positive rescaling of $W$ leaves $L$ unchanged. These invariants are checked numerically. Nearest-neighbor construction, bandwidth and normalization are components of the estimator, not properties inferred from the data~\cite{luxburg}.
+\begin{proposition}[Laplacian invariants]\label{prop:invariants}
+With $d=W\mathbf 1$ entrywise positive, $L\sqrt d=0$ for $\sqrt d=D^{1/2}\mathbf 1$, and $L$ is unchanged when $W$ is replaced by $cW$ for any $c>0$.
+\end{proposition}
+\begin{proof}
+$L\sqrt d=D^{-1/2}(D-W)D^{-1/2}D^{1/2}\mathbf 1=D^{-1/2}(D\mathbf 1-W\mathbf 1)=0$. Replacing $W$ by $cW$ replaces $D$ by $cD$ and leaves $D^{-1/2}WD^{-1/2}$ unchanged.
+\end{proof}
+Both invariants are checked numerically on every graph, with zero-mode residual below $10^{-10}$. Nearest-neighbor construction, bandwidth and normalization are components of the estimator, not properties inferred from the data~\cite{luxburg}.
 
 We compute the complete 512-mode eigensystem. KMeans, with five clusters and ten initializations, is fitted to the five eigenvectors immediately after the zero mode. We report the resulting silhouette on those coordinates. The reference dataset receives the same fitted pipeline. Random labels on SHA coordinates would answer a different question.
 
@@ -96,7 +104,14 @@ give a scale-dependent geometric description: $\|\Psi_t(i)-\Psi_t(\ell)\|_2$ equ
 
 There are three distinct parameters here. Compression round $r$ locates a state in the actual computation. Kernel parameter $h$ sets graph edge weights. Diffusion time $t$ changes the spectral scale at which that fixed graph is examined. Increasing $t$ does not advance the hash computation, and changing $h$ changes the object on which heat diffuses. Keeping these roles explicit allows the geometric and dynamical measurements to inform one another.
 
-The release saves complete spectra and traces at $t=0.01,0.1,1,10$. In particular, $Z(0)=n$. A truncated computation retaining $k$ smallest modes instead has $Z_k(0)=k$ and satisfies $0\leq Z(t)-Z_k(t)\leq(n-k)e^{-t\lambda_{k-1}}$. Full spectra avoid that truncation issue in this study. Figure~\ref{fig:heat} evaluates the same saved spectra over a continuous plotting grid; it introduces no new sampled states or fitted models.
+The release saves complete spectra and traces at $t=0.01,0.1,1,10$. In particular, $Z(0)=n$.
+\begin{proposition}[Trace truncation]\label{prop:truncation}
+For $1\le k\le n$ let $Z_k(t)=\sum_{j<k}e^{-t\lambda_j}$. Then $Z_k(0)=k$ and $0\leq Z(t)-Z_k(t)\leq(n-k)e^{-t\lambda_{k-1}}$ for all $t\ge0$.
+\end{proposition}
+\begin{proof}
+$Z(t)-Z_k(t)=\sum_{j\ge k}e^{-t\lambda_j}$ has $n-k$ nonnegative terms, each at most $e^{-t\lambda_{k-1}}$ because $\lambda_j\ge\lambda_{k-1}$ for $j\ge k$.
+\end{proof}
+Full spectra avoid that truncation issue in this study; the bound quantifies what a truncated computation omits. Figure~\ref{fig:heat} evaluates the same saved spectra over a continuous plotting grid; it introduces no new sampled states or fitted models.
 
 \begin{figure}[!htbp]\centering\includegraphics[width=\linewidth]{figures/heat_profiles.pdf}
 \caption{Heat-kernel profiles from all 512 eigenvalues per graph. Top: mean normalized trace $Z(t)/512$ for SHA and random states in each group. Bottom: mean paired SHA-minus-random trace contrast; shading shows one standard deviation of dataset-level paired differences, not a confidence interval. The two kernel parameters yield different diffusion profiles. Close population means are descriptive comparisons, not a test of equivalence.}\label{fig:heat}\end{figure}
@@ -104,7 +119,13 @@ The release saves complete spectra and traces at $t=0.01,0.1,1,10$. In particula
 \subsection{What geometry means in this study}
 Geometry here has an operational meaning: the metric, weighted neighborhoods and diffusion operator just defined, together with distances along intervention trajectories. These are concrete structures that can be measured without first identifying a smooth manifold. Continuum heat-kernel analysis~\cite{grigoryan} provides mathematical background; transferring an intrinsic-curvature or topology interpretation to these data requires a separate correspondence between that object and the measured graph.
 
-The finite-graph diagonal is nonincreasing because its derivative is $-\sum_j\lambda_j e^{-t\lambda_j}\phi_j(i)^2\leq0$. A two-time diagonal ratio therefore does not establish the sign of an underlying manifold's scalar curvature. Likewise, a Poincar\'e representation with prescribed negative curvature imposes a metric. When binary sign vectors are projected to a common radius, the resulting distance is a monotone function of Hamming distance. Neither construction alone demonstrates an intrinsic hyperbolic manifold.
+\begin{proposition}[No curvature sign from the diagonal]\label{prop:diagonal}
+For every vertex $i$, the map $t\mapsto K_t(i,i)$ is nonincreasing on $[0,\infty)$. Consequently $K_{t_2}(i,i)/K_{t_1}(i,i)\le1$ whenever $t_2>t_1$, for every graph and every $i$.
+\end{proposition}
+\begin{proof}
+$\frac{d}{dt}K_t(i,i)=-\sum_j\lambda_j e^{-t\lambda_j}\phi_j(i)^2\leq0$, since every $\lambda_j\ge0$.
+\end{proof}
+A two-time diagonal ratio therefore does not establish the sign of an underlying manifold's scalar curvature, and the continuum expansion $K_t(x,x)\sim(4\pi t)^{-d/2}\bigl(1+R(x)t/6+\cdots\bigr)$ is not available on a finite graph without a specified limiting construction. Likewise, a Poincar\'e representation with prescribed negative curvature imposes a metric. When binary sign vectors are projected to a common radius, the resulting distance is a monotone function of Hamming distance. Neither construction alone demonstrates an intrinsic hyperbolic manifold.
 
 \FloatBarrier
 \subsection{Replication and results}
@@ -173,7 +194,14 @@ Within W0, every coordinate enters at the same round. The early response nonethe
 Round & Correlation & MSB mean & W0 mean & Discovery min & Holdout min \\\midrule
 \EarlyCoordinateRows\bottomrule\end{tabular}\end{table}
 
-The round-1 endpoint has an exact explanation. Flipping the MSB of $W_0$ changes it by $2^{31}$ modulo $2^{32}$. At the first step, $T_1$ contains $W_0$ additively and the other inputs are unchanged, so both $a_1=T_1+T_2$ and $e_1=d_0+T_1$ change by $2^{31}$. Adding that value toggles precisely the MSB of a 32-bit word. The other six working words are unchanged, giving $A_1(m,0)=2$ for every base. Both saved partitions satisfy this identity. Lower-position additions can also affect more significant bits through carries. This explains the exceptional first-step MSB response; later rounds combine carries, rotations and Boolean mixing, and the data alone do not assign every later effect to one mechanism.
+The round-1 endpoint has an exact explanation.
+\begin{proposition}[Round-one response to the most significant bit]\label{prop:msb}
+For every message $m$, $A_1(m,0)=2$.
+\end{proposition}
+\begin{proof}
+In the first step $T_{1,1}=c+W_0$ with $c=h_0+\Sigma_1(e_0)+\operatorname{Ch}(e_0,f_0,g_0)+K_0$ constant, and $T_{2,1}$ is constant. Coordinate $0$ is bit $31$ of $W_0$, so $W_0(m\oplus e_0)=W_0(m)+2^{31}$ modulo $2^{32}$, both signs coinciding. Hence $a_1=T_{1,1}+T_{2,1}$ and $e_1=d_0+T_{1,1}$ each change by $2^{31}$, and adding $2^{31}$ toggles exactly bit $31$ of a 32-bit word. The other six working words of $X_1$ are components of the initial value. Exactly two bits change.
+\end{proof}
+Both saved partitions satisfy this identity on every base. Lower-position additions can also affect more significant bits through carries, which is why less significant positions change more bits at the first step. This explains the exceptional first-step MSB response; later rounds combine carries, rotations and Boolean mixing, and the data alone do not assign every later effect to one mechanism.
 
 \subsection{Candidate provenance and equal-budget search}
 
@@ -197,7 +225,10 @@ The fresh early-round follow-up fixes rounds 2--7 and 24 before execution, draws
 \section{Cube measurements and the timing of interventions}
 For a declared set of $k$ input coordinates $S$, the cube sum of an output $f$ is its $k$-fold Boolean derivative,
 \begin{equation}\Delta_S f(m)=\bigoplus_{u\in\{0,1\}^{k}}f(m\oplus E_Su).\end{equation}
-A Boolean polynomial of total degree below $k$ has zero $k$-fold derivative~\cite{lai}. A zero sum on a particular cube does not, conversely, prove a global degree bound. Cube attacks~\cite{dinur} and cube testers~\cite{testers} use related algebraic tools with different objectives. Our zero-rate measurements are cube tests on working-state projections; they do not perform key extraction or construct collisions or preimages.
+\begin{lemma}[Higher-order derivatives~\cite{lai}]\label{lem:lai}
+If every coordinate of $f$ has algebraic degree below $k$, then $\Delta_Sf\equiv0$ for every $S$ with $|S|=k$.
+\end{lemma}
+The converse fails: a zero sum on a particular cube, or at particular inputs, does not bound the degree. Cube attacks~\cite{dinur} and cube testers~\cite{testers} use related algebraic tools with different objectives. Our zero-rate measurements are cube tests on working-state projections; they do not perform key extraction or construct collisions or preimages.
 
 \subsection{Candidate cubes with matched entry time}
 We compare the candidate set $S$ with twenty random six-position subsets of W0. All variables therefore enter at the same compression step. The same 512 independently generated 55-byte bases are used for every set. Each cube evaluates 64 corners. The observable is the XOR sum of bit 16, numbered from the least-significant end, of register $a$. A zero bit-sum has reference probability one half under the random-function comparison.
@@ -242,12 +273,18 @@ The remaining updates copy working registers between rounds:
  b_r=a_{r-1},\quad c_r=a_{r-2},\quad d_r=a_{r-3},\qquad
  f_r=e_{r-1},\quad g_r=e_{r-2},\quad h_r=e_{r-3}.
 \end{equation}
-For the same base and intervention, cube differentiation commutes with these identities. Thus $\Delta_S d_r=\Delta_S a_{r-3}$ and $\Delta_S h_r=\Delta_S e_{r-3}$ whenever the displayed histories are defined. A trailing register can retain a zero sum after a leading register changes through exact transport. These identities give the observed pattern a precise meaning: the register view contains delayed copies of leading-word responses, while the nonlinear updates continually couple the two families.
+\begin{proposition}[Register transport]\label{prop:transport}
+As functions of the input, $b_r=a_{r-1}$, $c_r=a_{r-2}$, $d_r=a_{r-3}$ and $f_r=e_{r-1}$, $g_r=e_{r-2}$, $h_r=e_{r-3}$ whenever the indices are nonnegative, with $a_0,\dots,h_0$ the constants of the initial value. Hence $\Delta_S d_r=\Delta_S a_{r-3}$ and $\Delta_S h_r=\Delta_S e_{r-3}$ for every cube $S$; and if every position of $S$ lies in $W_j$, then $\Delta_S d_r=\Delta_S h_r=0$ for $r\le j+3$, $\Delta_S c_r=\Delta_S g_r=0$ for $r\le j+2$, and $\Delta_S b_r=\Delta_S f_r=0$ for $r\le j+1$.
+\end{proposition}
+\begin{proof}
+The identities are the copy updates iterated. The cube sums are sums of the same functions over the same inputs. Finally $a_{r'}$ and $e_{r'}$ do not depend on $W_j$ for $r'\le j$, because $W_j$ first enters through $T_{1,j+1}$.
+\end{proof}
+A trailing register can therefore retain a zero sum after a leading register changes, through exact transport alone. These identities give the observed pattern a precise meaning: the register view contains delayed copies of leading-word responses, while the nonlinear updates continually couple the two families.
 
 \begin{figure}[!htbp]\centering\includegraphics[width=\linewidth]{figures/cube_controls.pdf}
 \caption{Two distinct cube observables. Left and center: fraction of raw bases with a whole-word zero sum for the three-bit entry control, aligned to variable entry; W0 and W15 illustrate the transport pattern. Right: single-output-bit zero-rate differences for the six-bit candidate experiment, with base-resampled 95\% intervals. A whole-word zero and a zero bit have different reference probabilities.}\end{figure}
 
-The entry control displays the leading-to-trailing sequence predicted by the register identities. Its exact zero fractions depend on the selected offsets and backgrounds, so we do not identify a universal round threshold. Total round count alone is an incomplete description of the experiment: both the entry time of the variables and the observation register are necessary to interpret a surviving cube sum.
+The entry control displays the leading-to-trailing staircase predicted by Proposition~\ref{prop:transport}. Its exact zero fractions depend on the selected offsets and backgrounds, so we do not identify a universal round threshold. Total round count alone is an incomplete description of the experiment: both the entry time of the variables and the observation register are necessary to interpret a surviving cube sum.
 
 \section{Held-out classification of actual digests}
 The classification experiment uses $H(m)$ rather than $X_{64}(m)$. Each of five independent replications contains 2,000 SHA digests and 2,000 independent random-bit strings for training, and another balanced 4,000-observation holdout. The fixed models are a 100-tree random forest with maximum depth ten and an RBF SVM with $C=1$, default scaled gamma and fifty PCA components. PCA is fitted on training observations only. No model or feature selection uses the holdout. Neural differential distinguishers, such as Gohr's work on reduced Speck~\cite{gohr}, use chosen-difference pair distributions and are a different experiment; our two classifiers are not a replication of that approach.
@@ -266,7 +303,7 @@ The observed means are close to chance, with individual fits varying on either s
 \section{Geometric interpretation and research direction}
 Heat-kernel cryptanalysis begins by making the geometry of an observation explicit. In this study, that means a distance on bit states, a weighted neighborhood graph, and an operator whose modes resolve different diffusion scales. Following actual input perturbations adds a temporal description: entry, growth, transport and saturation. Taken together, these measurements let us describe where organization resides and ask which parts survive a change of sample or reference.
 
-The dynamical measurements resolve reproducible early structure within a word even when input entry is held fixed. The exact MSB endpoint and the discovery--holdout coordinate agreement give that description an algebraic and an empirical anchor. The early equal-budget searches and round-2 cube tests add a boundary: a candidate drawn from the significant half of the word behaves like other sets of that class, so early advantage belongs to position, not to the candidate. The entry-aligned avalanche trajectories and cube-transport identities describe additional aspects of perturbation movement. They are complementary observables, not interchangeable definitions of diffusion. This combination provides a concrete starting point for investigating more detailed local geometry.
+The dynamical measurements resolve reproducible early structure within a word even when input entry is held fixed. The exact MSB endpoint (Proposition~\ref{prop:msb}) and the discovery--holdout coordinate agreement give that description an algebraic and an empirical anchor. The early equal-budget searches and round-2 cube tests add a boundary: a candidate drawn from the significant half of the word behaves like other sets of that class, so early advantage belongs to position, not to the candidate. The entry-aligned avalanche trajectories and cube-transport identities describe additional aspects of perturbation movement. They are complementary observables, not interchangeable definitions of diffusion. This combination provides a concrete starting point for investigating more detailed local geometry.
 
 The terminal-state graph results have a different interpretation. Both SHA and random states acquire highly unbalanced fitted clusters at narrow bandwidth, and none of the sixteen tested mean heat-trace comparisons resolves a difference. The earlier detour contrast is not reproduced in the additional 100 pairs. The early position effects coexist with round-24 selection results that do not resolve a benefit and actual-digest classifier means near chance. This gives the investigation a temporal and observational scope; it supplies neither a full-round attack nor a security proof.
 

@@ -1,12 +1,12 @@
 {
   "standalone_arxiv_source": "two clean compilation passes; 0 LaTeX warnings; extracted PDF text matches delivery PDF",
-  "source_archive_sha256": "0a6e8e6175a7bdf9caf531c190c2ce1e9494909e1b75aff84797821446e5b51b",
-  "reproducibility_archive_sha256": "cc057128e7e2e5f4322215d0c4b963b406a470af6dc4fb9cfa7264148bd435af",
-  "extracted_archive_tests": "42 passed in 4.11s",
+  "source_archive_sha256": "21d0c374d11b321fc7fb1de45422c86e49340bef3ea0fefa0ac7165b88efc840",
+  "reproducibility_archive_sha256": "6b33cd45fb363b41e437bd217daefc4caae9b70d15fd50fa97198f19c0063066",
+  "extracted_archive_tests": "42 passed in 2.26s",
   "extracted_archive_evidence": "16 checks pass in the extracted archive",
   "extracted_manifest_mismatches": [],
   "figures": 7,
   "references": 16,
-  "pdf_pages": 17,
-  "pdf_sha256": "0d419d45c355e9946644ddef9cdf4c0a0fdcb4779aea9b96c1c55d3d19cae7d4"
+  "pdf_pages": 18,
+  "pdf_sha256": "808dba6279ab12063dbbfe001724e9d338d8398ca76c6e4cdd19b8fe33607dde"
 }
