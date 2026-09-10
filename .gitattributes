@@ -1,0 +1,5 @@
+# Byte-exact round trip on every platform. The receipts under publication/evidence/
+# record SHA-256 hashes of source files exactly as stored here, and
+# publication/verify_evidence.py recomputes them; any line-ending conversion
+# on checkout would break those checks.
+* -text

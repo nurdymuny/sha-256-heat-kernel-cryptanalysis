@@ -1,0 +1,102 @@
+{
+  "records": [
+    {
+      "seed": 261310,
+      "test_n": 4000,
+      "models": {
+        "RF": {
+          "correct": 2010,
+          "accuracy": 0.5025,
+          "auc": 0.5126636250000001
+        },
+        "PCA_SVM": {
+          "correct": 1961,
+          "accuracy": 0.49025,
+          "auc": 0.49620275
+        }
+      }
+    },
+    {
+      "seed": 261311,
+      "test_n": 4000,
+      "models": {
+        "RF": {
+          "correct": 2012,
+          "accuracy": 0.503,
+          "auc": 0.498941875
+        },
+        "PCA_SVM": {
+          "correct": 1929,
+          "accuracy": 0.48225,
+          "auc": 0.48474125
+        }
+      }
+    },
+    {
+      "seed": 261312,
+      "test_n": 4000,
+      "models": {
+        "RF": {
+          "correct": 1993,
+          "accuracy": 0.49825,
+          "auc": 0.49551100000000003
+        },
+        "PCA_SVM": {
+          "correct": 2057,
+          "accuracy": 0.51425,
+          "auc": 0.522898
+        }
+      }
+    },
+    {
+      "seed": 261313,
+      "test_n": 4000,
+      "models": {
+        "RF": {
+          "correct": 2042,
+          "accuracy": 0.5105,
+          "auc": 0.50651
+        },
+        "PCA_SVM": {
+          "correct": 2003,
+          "accuracy": 0.50075,
+          "auc": 0.49476425
+        }
+      }
+    },
+    {
+      "seed": 261314,
+      "test_n": 4000,
+      "models": {
+        "RF": {
+          "correct": 2006,
+          "accuracy": 0.5015,
+          "auc": 0.4950375
+        },
+        "PCA_SVM": {
+          "correct": 2010,
+          "accuracy": 0.5025,
+          "auc": 0.50285925
+        }
+      }
+    }
+  ],
+  "summary": {
+    "RF": {
+      "mean_accuracy": 0.50315,
+      "range": [
+        0.49825,
+        0.5105
+      ],
+      "mean_auc": 0.5017328
+    },
+    "PCA_SVM": {
+      "mean_accuracy": 0.49800000000000005,
+      "range": [
+        0.48225,
+        0.51425
+      ],
+      "mean_auc": 0.5002931
+    }
+  }
+}

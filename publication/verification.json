@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "checks": [
+    "graphs.json: full spectra, partitions, heat traces and intervals",
+    "confirmation/graphs.json: full spectra, partitions, heat traces and intervals",
+    "avalanche: frozen discovery selection and held-out effect",
+    "search: equal-budget saved per-base results",
+    "cubes: indicators, intervals and Holm adjustment",
+    "entry control: whole-word receipts and exact register-transport identities",
+    "ML: held-out predictions, labels, accuracy and AUC",
+    "main-run source snapshot: every recorded hash matches",
+    "follow-up protocol and executed source hashes",
+    "follow-up search: all 15 patterns, minima and paired intervals",
+    "follow-up cubes: full words, indicators, Holm family and independent scalar corners",
+    "100 fresh detour pairs: seed range and all five intervals",
+    "exact round-one MSB observation in both original partitions",
+    "matched search: identical bases and candidate scores, pool membership, per-set means, intervals and counts",
+    "matched cubes: identical bases and candidate word sums, indicators, per-set rates, ranges, intervals and whole-word fractions",
+    "uniform-control diagnostics: offset correlations, round-2 rates, ranges and whole-word fractions recomputed"
+  ]
+}

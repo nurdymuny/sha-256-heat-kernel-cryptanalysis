@@ -1,0 +1,238 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.9in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype,amsmath,amssymb,booktabs,graphicx,array}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\hypersetup{pdftitle={Heat-Kernel Cryptanalysis of SHA-256: A Geometric Study of State Evolution},pdfauthor={Bee Rosa Davis},pdfkeywords={SHA-256, heat-kernel cryptanalysis, spectral geometry, state evolution, avalanche effect, higher-order differentials}}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage[section]{placeins}
+\setlength{\parskip}{4pt}
+\setlength{\parindent}{0pt}
+\setlength{\emergencystretch}{2em}
+\setcounter{topnumber}{4}
+\setcounter{totalnumber}{5}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.8}
+\input{numbers.tex}
+\title{Heat-Kernel Cryptanalysis of SHA-256:\\A Geometric Study of State Evolution}
+\author{Bee Rosa Davis\\Davis Geometric\\\small \href{mailto:bee_davis@alumni.brown.edu}{bee\_davis@alumni.brown.edu}\\\small ORCID: \href{https://orcid.org/0009-0009-8034-4308}{0009-0009-8034-4308}}
+\date{Working paper}
+\begin{document}
+\maketitle
+\begin{abstract}
+How does a structured computation spread a local change through its state, and what can the geometry of that process tell us? This paper develops a heat-kernel approach to the cryptanalytic study of SHA-256. Sampled working states define a weighted graph; its Laplacian and heat kernel describe neighborhoods and the persistence of spectral modes across diffusion scales. Coordinate-resolved interventions and Boolean cube sums then connect that geometric description to the round computation. Across 112,640 one-bit message interventions, the response has an organized temporal structure: input words enter at different rounds, and entry-aligned trajectories reveal growth toward a mean separation near half the state bits. A separate cube experiment resolves the two register-transport chains through which leading-word responses reach trailing words. Matched random-state graphs show that large clustering scores alone are not a SHA-specific signature; small detour contrasts repeat in two groups but remain unresolved in a third sensitivity sample. Discovery-selected coordinates do not retain a lower-distance advantage on holdout bases, and the tested equal-budget searches and cubes establish no candidate advantage. Actual-digest classifiers average \RFAccuracy\% and \SVMAccuracy\% accuracy. The contribution is a geometric investigative method, a measured account of perturbation transport, and explicit tests of whether the resulting observations support cryptanalytic use.
+\end{abstract}
+\noindent\textbf{Keywords:} SHA-256; heat-kernel cryptanalysis; spectral geometry; state evolution; avalanche effect; higher-order differentials.
+
+\section{The geometric question}
+The question that motivated this work was whether SHA-256 has geometric regularities that could be exploited. I wanted to examine the computation as an evolving object: how neighboring inputs separate, where a perturbation enters, and how its influence moves through the working state. A final digest gives one view of that object. The intermediate states expose the process that produces it.
+
+I use \emph{heat-kernel cryptanalysis} to name the investigative approach developed here: equip a sampled cryptographic state space with an explicit neighborhood geometry, probe it by spectral diffusion, and test whether the resulting observations identify useful interventions or distinctions. The heat kernel provides a family of scales at which to examine organization. The cryptanalytic question gives those observations a concrete test: do they persist on new inputs, distinguish a matched reference, or help a specified search?
+
+Two complementary descriptions guide the study. The first is relational: distances, neighborhoods and modes among sampled states. The second is dynamical: the response to a declared input change as it passes through rounds and registers. Both describe the same computation, but they measure different things. In particular, heat diffusion on a graph of terminal states is an analytical probe; it is not the SHA-256 round function. The intervention experiments provide the connection to actual state evolution.
+
+This distinction preserves the geometric question while making it testable. We ask whether terminal-state graph statistics differ under a matched random-bit comparison, whether distance-selected input coordinates retain an advantage on new messages, and how input entry and register transport organize higher-order responses. A pattern can be a useful description of the computation before it becomes a useful attack. Here, geometric description and tested cryptanalytic performance are reported separately.
+
+This investigation also supplied the starting point for my subsequent dual-torus and double-cover work. The connection is a research question about coupled parts and complementary descriptions of one object. Section~\ref{sec:continuity} explains that connection and the additional mathematics it requires.
+
+\section{Primitives, coordinates and validation}
+We implement the SHA-256 compression steps specified in FIPS 180-4~\cite{nist}. Let $X_r(m)=(a_r,b_r,c_r,d_r,e_r,f_r,g_r,h_r)$ be the eight working words after $r$ completed rounds of the first compression block. $X_0$ is the initial value; $X_{64}$ precedes feed-forward. The final digest $H(m)$ includes feed-forward and all padding blocks. For a single block and fixed initial value, feed-forward is a fixed word-wise modular-addition bijection, but it need not preserve bit distances or a fitted classifier's features.
+
+Message-based experiments use independent 55-byte inputs, so SHA padding produces one block. An input coordinate $i$ is MSB-first within a byte: byte $\lfloor i/8\rfloor$, mask $2^{7-(i\bmod8)}$. The corresponding message word is $W_{\lfloor i/32\rfloor}$. These are input coordinates, not coordinates of working register $a$ or any other register. All 440 content bits are eligible for the avalanche experiment; the last content word has 24 eligible bits.
+
+The scalar implementation was compared with \texttt{hashlib} at padding boundaries, including messages that require multiple blocks. A vectorized implementation of raw-block working states was independently checked against the scalar captures at rounds 0, 1, 2, 8, 15, 16, 17, 18, 32 and 64. Block index and within-block round are recorded separately. Regression gates cover positive-degree graph normalization, complete heat traces, truncation bounds, reference calibration, bit placement and GF(2) rank. The release includes the tests and their results.
+
+\begin{table}[ht]
+\centering\small
+\caption{Experimental units. Shared interventions on one base are not counted as independent base messages.}
+\begin{tabular}{@{}p{.25\linewidth}p{.66\linewidth}@{}}\toprule
+Experiment & Design \\\midrule
+Spectral graphs & Two groups of 20 independent dataset pairs; 512 states per dataset; two kernel parameters; full spectra. \\
+Detour sensitivity & 20 fresh datasets per representation: working state, digest, PCG64 and MT19937 bit strings. \\
+Avalanche & 128 discovery and 128 holdout bases; all 440 single-bit interventions on each; 27 sampled rounds. \\
+Two-bit search & 256 new bases; candidate set and 20 random sets; 15 two-bit patterns per set and base. \\
+Six-bit cubes & 512 new bases; candidate set and 20 random sets; 64 corners; eight round counts. \\
+Input-entry control & 256 uniform raw blocks; three-bit cubes placed in five message words; eight relative round counts. \\
+Digest classifiers & Five independent fits per model; 4,000 training and 4,000 test observations per fit, balanced by class. \\\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Heat-kernel geometry of sampled states}
+The geometric object in this experiment is a finite weighted graph built from terminal working states $X_{64}(m)$. Its vertices are sampled states, not individual rounds along one trajectory. We specify its metric and neighborhood rule so that a spectral observation has a reproducible meaning.
+Binary working states are embedded in $\mathbb R^{256}$ without fitted dimensional reduction. Euclidean distance is the square root of Hamming distance. For each point, we find 30 nonself nearest neighbors and form directed weights
+\begin{equation}
+ W^{\rightarrow}_{ij}=\mathbf 1\{j\in N_{30}(i)\}
+ \exp\!\left(-\frac{\|x_i-x_j\|^2}{4h}\right),\qquad
+ W=\frac{W^{\rightarrow}+(W^{\rightarrow})^\top}{2}.
+\end{equation}
+We study $h=1$ and $h=8$ with identical settings for SHA states and independently sampled random bits. With $d_i=\sum_jW_{ij}>0$, the symmetric normalized Laplacian is
+\begin{equation}L=I-D^{-1/2}WD^{-1/2}.\end{equation}
+Its zero eigenvector is proportional to $\sqrt d$; a common positive rescaling of $W$ leaves $L$ unchanged. These invariants are checked numerically. Nearest-neighbor construction, bandwidth and normalization are components of the estimator, not properties inferred from the data~\cite{luxburg}.
+
+We compute the complete 512-mode eigensystem. KMeans, with five clusters and ten initializations, is fitted to the five eigenvectors immediately after the zero mode. We report the resulting silhouette on those coordinates. The reference dataset receives the same fitted pipeline. Random labels on SHA coordinates would answer a different question.
+
+A second statistic, the \emph{detour ratio}, uses an undirected union graph of ten nonself neighbors, with Euclidean edge lengths. It is the mean shortest-path distance divided by direct Euclidean distance over finite, distinct pairs. Sparse graphs can have ratios well above one on random clouds. Thus the random-data comparator is measured, not assigned the value one.
+
+\subsection{Diffusion as a geometric probe}
+For graph diffusion time $t\geq0$, distinct from compression-round count $r$,
+\begin{equation}
+ K_t=\exp(-tL),\quad Z(t)=\operatorname{tr}K_t=\sum_{j=0}^{n-1}e^{-t\lambda_j},\quad
+ K_t(i,i)=\sum_j e^{-t\lambda_j}\phi_j(i)^2.
+\end{equation}
+For a signal $u_0$ on the sampled states, $u(t)=K_tu_0$ solves $\partial_tu=-Lu$. In this sense, the graph lets us ask how a localized signal spreads across the neighborhoods defined by the state metric. Each eigenmode is attenuated by $e^{-t\lambda_j}$: larger eigenvalues decay sooner, while smaller eigenvalues retain their contribution over longer diffusion times. A slow mode is a feature of this graph and scale choice whose cryptanalytic significance can then be investigated.
+
+The heat trace $Z(t)$ collects these attenuation factors into a global diffusion profile. The diagonal $K_t(i,i)$ resolves the contribution at an individual sampled state. More generally, the coordinates
+\begin{equation}
+ \Psi_t(i)=\bigl(e^{-t\lambda_j}\phi_j(i)\bigr)_{j=0}^{n-1}
+\end{equation}
+give a scale-dependent geometric description: $\|\Psi_t(i)-\Psi_t(\ell)\|_2$ equals the Euclidean distance between rows $i$ and $\ell$ of $K_t$. Thus two states can be compared through their diffusion profiles as well as through their original bit distance. The present experiments report global traces and spectral summaries; these coordinates explain the lens rather than introduce an additional tested selection rule.
+
+There are three distinct parameters here. Compression round $r$ locates a state in the actual computation. Kernel parameter $h$ sets graph edge weights. Diffusion time $t$ changes the spectral scale at which that fixed graph is examined. Increasing $t$ does not advance the hash computation, and changing $h$ changes the object on which heat diffuses. Keeping these roles explicit allows the geometric and dynamical measurements to inform one another.
+
+The release saves complete spectra and traces at $t=0.01,0.1,1,10$. In particular, $Z(0)=n$. A truncated computation retaining $k$ smallest modes instead has $Z_k(0)=k$ and satisfies $0\leq Z(t)-Z_k(t)\leq(n-k)e^{-t\lambda_{k-1}}$. Full spectra avoid that truncation issue in this study. Figure~\ref{fig:heat} evaluates the same saved spectra over a continuous plotting grid; it introduces no new sampled states or fitted models.
+
+\begin{figure}[ht]\centering\includegraphics[width=\linewidth]{figures/heat_profiles.pdf}
+\caption{Heat-kernel profiles from all 512 eigenvalues per graph. Top: mean normalized trace $Z(t)/512$ for SHA and random states in each group. Bottom: mean paired SHA-minus-random trace contrast; shading shows one standard deviation of dataset-level paired differences, not a confidence interval. The two kernel parameters yield different diffusion profiles. Close population means are descriptive comparisons, not a test of equivalence.}\label{fig:heat}\end{figure}
+
+\subsection{What geometry means in this study}
+Geometry here has an operational meaning: the metric, weighted neighborhoods and diffusion operator just defined, together with distances along intervention trajectories. These are concrete structures that can be measured without first identifying a smooth manifold. A stronger interpretation, such as intrinsic scalar curvature or a particular topology of the state space, would require a separate correspondence between that mathematical object and the measured graph.
+
+The finite-graph diagonal is nonincreasing because its derivative is $-\sum_j\lambda_j e^{-t\lambda_j}\phi_j(i)^2\leq0$. A two-time diagonal ratio therefore does not establish the sign of an underlying manifold's scalar curvature. Likewise, a Poincare representation with prescribed negative curvature imposes a metric. When binary sign vectors are projected to a common radius, the resulting distance is a monotone function of Hamming distance. Neither construction alone demonstrates an intrinsic hyperbolic manifold.
+
+\FloatBarrier
+\subsection{Replication and results}
+Each primary replication uses a new seed and independently generated SHA inputs and random bits. We use percentile bootstrap intervals with 5,000 resamples of the paired dataset-level differences. These are descriptive, unadjusted intervals. They do not treat graph edges or eigenmodes as independent observations.
+
+\begin{figure}[ht]\centering\includegraphics[width=\linewidth]{figures/graph_controls.pdf}
+\caption{Each dot is one dataset's fitted silhouette; short bars show means. The same pipeline produces high scores in SHA and random data at $h=1$. Broadening the kernel changes the score substantially in both populations. The confirmation group uses fresh seeds.}\end{figure}
+
+\begin{table}[ht]\centering\small
+\footnotesize
+\caption{Graph statistics, with SHA-minus-random differences and descriptive 95\% bootstrap intervals. Every row has 20 paired dataset replications.}
+\begin{tabular}{@{}lllr r l@{}}\toprule
+Group & $h$ & Statistic & SHA & Random & Difference [95\% interval] \\\midrule
+\GraphRows
+\bottomrule\end{tabular}\end{table}
+
+The kernel parameter changes mean silhouette from approximately 0.90 to 0.16 in both populations. The absolute height of a silhouette score therefore does not identify a SHA-specific effect. The primary $h=8$ silhouette difference is slightly negative; that contrast does not repeat in the confirmation group. The spectral-gap intervals include zero in both groups at both kernel parameters.
+
+The detour contrast is more nuanced. Its small negative interval repeats in the first two groups. We therefore retain that observation rather than replacing it with a claim of equality. A further twenty-dataset sensitivity sample compares working states and actual digests with both PCG64 and MT19937 references (Table~\ref{tab:sensitivity}). Those intervals include zero, and the estimates vary with representation and reference. These observations leave a small construction-specific detour contrast unresolved; they do not establish either a robust general fingerprint or its absence.
+
+\begin{table}[ht]\centering\small
+\caption{Fresh detour sensitivity sample, 20 paired replications per comparison. State means terminal pre-feed-forward working state. These follow-up comparisons were specified after observing the first two graph groups.}\label{tab:sensitivity}
+\begin{tabular}{@{}lrr@{}}\toprule
+Comparison & Mean difference & 95\% interval \\\midrule
+\SensitivityRows\bottomrule
+\end{tabular}\end{table}
+
+The confirmation and sensitivity samples are follow-ups, not a preregistered external replication. Their protocols and seeds were saved before their execution. Reporting each group separately preserves the distinction between initial exploration and fresh evaluation without assuming that a later nonsignificant interval disproves an earlier effect.
+
+\section{Coordinate-resolved avalanche and selection}
+The spectral experiment describes relations among terminal states. We next follow local changes through the computation itself. Neighboring input messages start one bit apart; their state separation becomes a trajectory indexed by compression round and input coordinate. This is the dynamical side of the geometric investigation.
+For each base message $m$ and input bit $i$, we measure
+\begin{equation}A_r(m,i)=\operatorname{HW}\bigl(X_r(m)\oplus X_r(m\oplus e_i)\bigr),\end{equation}
+where $\operatorname{HW}$ counts changed bits across all eight working words. This is a physical input intervention with a declared output statistic. It is not a per-output-bit diffusion rate.
+
+Every one of 128 discovery bases is perturbed at all 440 content positions. The 22 positions with smallest discovery mean $A_{24}$ are frozen before evaluating a separate set of 128 bases. Selecting 22 positions defines a candidate set; the count is not itself a test for exceptional bits. Resampling is over bases, keeping all within-base interventions together.
+
+\begin{figure}[ht]\centering\includegraphics[width=\linewidth]{figures/avalanche_entry.pdf}
+\caption{Measured holdout avalanche. Left: mean Hamming distance grouped by the actual flipped message word. Right: selected word groups aligned by their entry round. Later words begin influencing the state later; a full-trajectory slope would combine that delay with growth and saturation.}\end{figure}
+
+The entry-aligned view exposes a common progression across the displayed word groups: an initially localized change spreads through the state and approaches a separation near 128 bits. This is a measured organization of the response in time and input coordinates. It also changes the question we should ask of a purportedly slow direction. A coordinate that enters later has had less time to act; a coordinate with a small sample mean must still be evaluated on new bases. The trajectory supplies the structure, and the holdout asks whether a selected feature travels beyond the sample that suggested it.
+
+The selected-minus-other holdout difference at round 24 is \HoldoutDifference{} bits, with interval \HoldoutCI{}. The data do not establish a persistent lower-distance advantage for this selection rule. Across the holdout interventions, mean round-64 Hamming distance is \FinalHamming{} bits out of 256. This is an observed average, not a claim that all directions, messages or higher-order statistics are identical.
+
+We separately test the fixed candidate positions $S=\{1,5,7,9,10,14\}$ on 256 fresh bases. For each six-position set, the search evaluates all 15 two-position flips and retains the smallest raw round-24 Hamming distance. The comparator comprises twenty uniformly sampled six-position subsets of W0, with exactly the same search budget. Distances are left on the same scale on both sides.
+
+\begin{figure}[ht]\centering\includegraphics[width=\linewidth]{figures/holdout_search.pdf}
+\caption{Independent evaluation of selected coordinates. Left: discovery versus holdout means for all 440 positions, with the frozen 22 highlighted. Right: per-base candidate-minus-control difference for equally budgeted two-bit searches; negative values favor the candidate.}\end{figure}
+
+The candidate-minus-mean-control difference is \SearchDifference{} bits, with interval \SearchCI{}. This comparison does not resolve an advantage for the tested candidate. The interval is conditional on the twenty sampled control sets; it does not quantify uncertainty over every possible six-position set. The search question remains distinct from digest discrimination or attack complexity.
+
+\section{Cube measurements and the timing of interventions}
+For a declared set of $k$ input coordinates $S$, the cube sum of an output $f$ is its $k$-fold Boolean derivative,
+\begin{equation}\Delta_S f(m)=\bigoplus_{u\in\{0,1\}^{k}}f(m\oplus E_Su).\end{equation}
+A Boolean polynomial of total degree below $k$ has zero $k$-fold derivative. A zero sum on a particular cube does not, conversely, prove a global degree bound. Cube techniques are established tools for testing polynomial structure~\cite{dinur}; here we report explicitly bounded measurements of working-state projections.
+
+\subsection{Candidate cubes with matched entry time}
+We compare the candidate set $S$ with twenty random six-position subsets of W0. All variables therefore enter at the same compression step. The same 512 independently generated 55-byte bases are used for every set. Each cube evaluates 64 corners. The observable is the XOR sum of bit 16, numbered from the least-significant end, of register $a$. A zero bit-sum has reference probability one half under the random-function comparison.
+
+\begin{table}[ht]\centering\small
+\caption{Six-bit cube results. Differences and intervals are percentage points. The last column adjusts the eight candidate-versus-one-half binomial tests by Holm's method; it is not a test of the candidate-versus-control difference.}
+\begin{tabular}{@{}rrrrlr@{}}\toprule
+Round & Candidate (\%) & Control (\%) & Difference & 95\% interval & Holm $p$ \\\midrule
+\CubeRows\bottomrule
+\end{tabular}\end{table}
+
+None of the eight candidate zero-rate tests rejects after the stated adjustment. Every paired candidate-minus-control interval also includes zero. This supports a bounded negative result for this set, projection, background distribution and sample size. It does not show equivalence to all controls or bound the best cube over all coordinates and observables.
+
+\FloatBarrier
+\subsection{Coupled register families and perturbation transport}
+An input variable in original message word $W_j$ first enters at compression step $j$, or completed-round count $j+1$. We use $\delta=r-(j+1)$ to describe time since that entry. A separate control draws 256 uniform raw 64-byte blocks and moves the same three MSB-first offsets $\{0,1,2\}$ among W0, W4, W8, W12 and W15. These are raw compression-block interventions, including positions that would be padding or length bits in a message-based experiment; no padded-message interpretation is applied.
+
+The working state has a useful algebraic organization into $A_r=(a_r,b_r,c_r,d_r)$ and $E_r=(e_r,f_r,g_r,h_r)$. Each family has a newly computed leading word and three transported words. With all additions taken modulo $2^{32}$, the two leading updates are~\cite{nist}
+\begin{align}
+ T_{1,r}&=h_{r-1}+\Sigma_1(e_{r-1})+\operatorname{Ch}(e_{r-1},f_{r-1},g_{r-1})+K_{r-1}+W_{r-1},\\
+ T_{2,r}&=\Sigma_0(a_{r-1})+\operatorname{Maj}(a_{r-1},b_{r-1},c_{r-1}),\\
+ a_r&=T_{1,r}+T_{2,r},\qquad e_r=d_{r-1}+T_{1,r}.
+\end{align}
+Here $\Sigma_0,\Sigma_1,\operatorname{Ch},\operatorname{Maj}$ and $K_j$ have their FIPS definitions, and $W_j$ is the expanded schedule word after the original sixteen input words. The shared $T_{1,r}$ and the $d_{r-1}$ term explicitly couple the families. This partition identifies two interacting parts of one state, not statistically independent systems.
+
+The remaining updates copy working registers between rounds:
+\begin{equation}
+ b_r=a_{r-1},\quad c_r=a_{r-2},\quad d_r=a_{r-3},\qquad
+ f_r=e_{r-1},\quad g_r=e_{r-2},\quad h_r=e_{r-3}.
+\end{equation}
+For the same base and intervention, cube differentiation commutes with these identities. Thus $\Delta_S d_r=\Delta_S a_{r-3}$ and $\Delta_S h_r=\Delta_S e_{r-3}$ whenever the displayed histories are defined. A trailing register can retain a zero sum after a leading register changes through exact transport. These identities give the observed pattern a precise meaning: the register view contains delayed copies of leading-word responses, while the nonlinear updates continually couple the two families.
+
+\begin{figure}[ht]\centering\includegraphics[width=\linewidth]{figures/cube_controls.pdf}
+\caption{Two distinct cube observables. Left and center: fraction of raw bases with a whole-word zero sum for the three-bit entry control, aligned to variable entry; W0 and W15 illustrate the transport pattern. Right: single-output-bit zero-rate differences for the six-bit candidate experiment, with base-resampled 95\% intervals. A whole-word zero and a zero bit have different reference probabilities.}\end{figure}
+
+The entry control displays the leading-to-trailing sequence predicted by the register identities. Its exact zero fractions depend on the selected offsets and backgrounds, so we do not identify a universal round threshold. Total round count alone is an incomplete description of the experiment: both the entry time of the variables and the observation register are necessary to interpret a surviving cube sum.
+
+\section{Held-out classification of actual digests}
+The classification experiment uses $H(m)$ rather than $X_{64}(m)$. Each of five independent replications contains 2,000 SHA digests and 2,000 independent random-bit strings for training, and another balanced 4,000-observation holdout. The fixed models are a 100-tree random forest with maximum depth ten and an RBF SVM with $C=1$, default scaled gamma and fifty PCA components. PCA is fitted on training observations only. No model or feature selection uses the holdout.
+
+\begin{table}[ht]\centering\small
+\caption{Five independent classifier replications. Ranges describe the five fits and are not confidence bounds on all distinguishers.}
+\begin{tabular}{@{}lrrr@{}}\toprule
+Model & Mean accuracy (\%) & Accuracy range (\%) & Mean AUC \\\midrule
+\MLRows\bottomrule\end{tabular}\end{table}
+
+\begin{figure}[ht]\centering\includegraphics[width=\linewidth]{figures/digest_classifiers.pdf}
+\caption{Each dot is a model trained and evaluated on a fresh balanced dataset. Horizontal colored bars indicate means; the dotted line is one-half. These results quantify the tested procedures, rather than cryptographic indistinguishability.}\end{figure}
+
+The observed means are close to chance, with individual fits varying on either side. This experiment has finite sample size and limited model classes. It supplies no basis for inferring full-round security from classifier failure, nor does it invalidate a different statistic evaluated on a different object.
+
+\section{Geometric interpretation and research direction}
+Heat-kernel cryptanalysis begins by making the geometry of an observation explicit. In this study, that means a distance on bit states, a weighted neighborhood graph, and an operator whose modes resolve different diffusion scales. Following actual input perturbations adds a temporal description: entry, growth, transport and saturation. Taken together, these measurements let us describe where organization resides and ask which parts survive a change of sample or reference.
+
+The strongest dynamical observation is the organized movement of perturbations through the working state. The entry-aligned avalanche trajectories and the cube-transport identities describe different aspects of that movement. The former measure total state separation; the latter resolve higher-order responses in individual words. They are complementary observables, not interchangeable definitions of diffusion. Their agreement with input timing and register architecture gives a concrete starting point for investigating more detailed local geometry.
+
+The terminal-state graph results have a different interpretation. Both SHA and random states acquire pronounced structure under the fitted neighborhood construction. The small detour contrast remains an open empirical question across the reported samples. The current selection and classification tests do not supply an attack improvement or a dependable digest distinction. This sets the reach of the tested methods while leaving the geometric investigation available for more discriminating observables.
+
+\subsection{From heat kernels to dual torus and double cover}\label{sec:continuity}
+The connection that matters to my broader work is that one computation admits multiple connected descriptions. A state can be examined through its neighborhood relations, through a local intervention, or through the coupled register families that produce its next update. Each description preserves some information and suppresses other information. Understanding how they constrain one another became the next research question.
+
+This line of investigation led me to the dual-torus formulation: to study the $A$ and $E$ families as coupled modular-coordinate systems and ask whether their local responses require different geometric descriptions. The modular arithmetic and the coupling equations above are the starting objects. Establishing a particular torus model, a carry-based geometry or distinct subsystem timescales requires the definitions and experiments of that subsequent work. The two-family partition by itself does not establish those further results.
+
+The later double-cover work pursued the broader idea of different, connected descriptions belonging to the same object. Here that connection is motivation, not a topological conclusion: a double cover requires specified spaces and a map with the corresponding covering properties. Two register families or two ways of plotting a computation do not supply such a map. What this paper contributes to that progression is the initial investigative method and a concrete computational setting in which relationships between descriptions can be measured.
+
+My purpose in this first study is to make the geometric question accessible to experiment. The next step is to ask whether a feature resolved in one description predicts a response in another, with the correspondence and the evaluation fixed in advance. Examples include relating a graph mode to a held-out intervention response, or testing a channel-specific observable after aligning input entry and register delay. These would connect the geometric and algebraic views more tightly than an absolute clustering score or a visually distinctive trajectory alone.
+
+\subsection{Evidence and reproducibility}
+
+The accompanying \texttt{sha256\_reproducibility.zip} supplies the exact main-run source snapshot, follow-up runners, protocols, seeds, dependency versions, full graph spectra, intervention arrays, cube indicators, classifier holdouts and predictions, figure builder and manuscript source. Every numerical table and figure is generated from those records. All experimental inputs are synthetically generated; their generation code and seeds are included.
+
+All bootstrap intervals use independently sampled bases or whole dataset pairs as the resampling unit. Most are descriptive and unadjusted; only the stated eight cube binomial tests use a familywise adjustment. The shared candidate/control bases and the sampled control sets are explicitly retained. The graph follow-ups were chosen after initial results and are reported as such. These design boundaries delimit the findings without converting the paper into a claim about every possible SHA-256 measurement.
+
+\paragraph{Funding.} This research received no external funding.
+\paragraph{Author statement.} The author develops the geometric research framework motivating these measurements.
+
+\begin{thebibliography}{9}
+\bibitem{nist} National Institute of Standards and Technology. \emph{Secure Hash Standard (SHS)}. FIPS PUB 180-4, 2015. \url{https://doi.org/10.6028/NIST.FIPS.180-4}.
+\bibitem{luxburg} U. von Luxburg. A tutorial on spectral clustering. \emph{Statistics and Computing}, 17:395--416, 2007. \url{https://arxiv.org/abs/0711.0189}.
+\bibitem{dinur} I. Dinur and A. Shamir. Cube attacks on tweakable black box polynomials. \emph{EUROCRYPT 2009}, pp. 278--299. Preprint: \url{https://eprint.iacr.org/2008/385}.
+\end{thebibliography}
+\end{document}

@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "context": "Second control family, added after review of the early-round follow-up. Not an independent preregistered study.",
+  "control_pool": "six-position subsets of MSB-first offsets 0-14 of W0 (LSB-numbered bits 17-31); the candidate lies in this pool and every pooled bit is above the observed bit 16",
+  "control_sets": 40,
+  "seed": 264310,
+  "target": [
+    1,
+    5,
+    7,
+    9,
+    10,
+    14
+  ],
+  "bases": "the saved follow-up bases in publication/evidence/followup/search.npz and cubes.npz",
+  "rounds": "the saved follow-up rounds: search [2,3,4,5,6,7,24]; cubes [2,3,4,5,6,7,8,10,12,14,16,18,20,24]",
+  "statistics": "per-set means; paired candidate-minus-matched-mean percentile bootstrap over bases; count of matched sets below the candidate (search) or at or above it (cubes); whole-word zero fractions for registers a and e",
+  "inference": "descriptive, unadjusted, conditional on the sampled sets; no equivalence claim",
+  "selection": "protocol, seed and set count fixed before execution"
+}

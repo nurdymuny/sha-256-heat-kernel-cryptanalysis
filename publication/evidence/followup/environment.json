@@ -1,0 +1,11 @@
+{
+  "started_utc": "2026-09-10T00:29:12.459790+00:00",
+  "python": "3.12.10",
+  "numpy": "2.4.0",
+  "source_hashes": {
+    "analysis/publication_followup.py": "b1a4d26bae54c7b6c92b55f5b4d3332243a4dd2b3795b58923e7d1e1a994621a",
+    "analysis/publication_study.py": "da158a3f994f1a3cdc32246b3023acfe5457de1dd1f7f22539f28ec6a7b18eb6",
+    "src/sha256/batch.py": "ce235f997bdf4ce4492c43691443a0b098773fb51427ca4d60371703bcf90dbb",
+    "src/sha256/core.py": "c64567451d1f341c01109cd06695f155f6a0705cde50adb10ee628ff57c52032"
+  }
+}

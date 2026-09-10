@@ -1,0 +1,79 @@
+{
+  "version": "1.0",
+  "context": "Author follow-up after review of primary and confirmation data; not an independent preregistered study.",
+  "detour": {
+    "seed_start": 263910,
+    "pairs": 100,
+    "points": 512,
+    "k_nonself": 10,
+    "representations": [
+      "state",
+      "digest",
+      "PCG64",
+      "MT19937"
+    ]
+  },
+  "search": {
+    "seed": 264110,
+    "bases": 256,
+    "rounds": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      24
+    ],
+    "target": [
+      1,
+      5,
+      7,
+      9,
+      10,
+      14
+    ],
+    "controls": 20,
+    "control_pool": "uniform six-position subsets of W0",
+    "patterns": "all 15 two-position flips; minimum Hamming distance over eight working words"
+  },
+  "cubes": {
+    "seed": 264210,
+    "bases": 512,
+    "rounds": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20,
+      24
+    ],
+    "target": [
+      1,
+      5,
+      7,
+      9,
+      10,
+      14
+    ],
+    "controls": 20,
+    "control_pool": "uniform six-position subsets of W0",
+    "observable": "zero XOR sum of bit 16 LSB-first of register a; full word sums saved"
+  },
+  "inference": {
+    "bootstrap": 5000,
+    "resampling": "independent bases or whole dataset pairs; paired differences; control-set uncertainty conditional on sampled sets",
+    "intervals": "95 percent descriptive, unadjusted",
+    "cube_tests": "target-versus-one-half exact binomial; Holm across all fourteen follow-up rounds, a family distinct from primary eight tests",
+    "no_equivalence_claim": true
+  },
+  "selection": "Target inherited from prior exploratory work; all rounds, sample counts and seed ranges fixed before executing this follow-up."
+}

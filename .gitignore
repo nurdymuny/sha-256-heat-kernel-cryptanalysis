@@ -1,0 +1,43 @@
+# Environments, caches, build products
+.venv/
+.pytest_cache/
+__pycache__/
+*.egg-info/
+tmp/
+output/
+.DS_Store
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+
+# Separate manuscripts and exploratory research branches (not part of this paper)
+theory/
+thermocline/
+resonant_tunnel/
+algebraic_pipeline/
+heat-kernel-samples/
+visualizations/
+results/
+spec.MD
+sha256_preimage_spec.md
+pipeline_idea.MD
+
+# December 2025 exploratory outputs and cloud/tomography scripts (not used by the paper)
+/*.json
+/*.npz
+/*.zip
+/modal_app.py
+/modal_resonance_test.py
+/run_thermocline.py
+/lazy_mutant.py
+/analyze_deep_schedules.py
+/analyze_top.py
+/aggregate_channel_results.py
+/summarize_tomography.py
+/tomography_fdr_analysis.py
+/test_gpu_cpu_depth.py
+
+# Reviewer notes that reference material outside this repository
+review/PUBLICATION_REVIEW_2026-09-09.md

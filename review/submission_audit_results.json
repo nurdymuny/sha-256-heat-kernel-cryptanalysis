@@ -1,0 +1,394 @@
+{
+  "created_utc": "2026-09-09T23:15:59.205777+00:00",
+  "seed": 20260909,
+  "python": "3.12.10",
+  "numpy": "2.4.0",
+  "scipy": "1.16.3",
+  "sklearn": "1.9.0",
+  "scope": "Targeted current-code counterexamples, not a rerun of all historical experiments.",
+  "sha_core": {
+    "hashlib_cases_passed": 33,
+    "message_lengths": [
+      0,
+      1,
+      3,
+      55,
+      56,
+      63,
+      64,
+      65,
+      119,
+      120,
+      128
+    ],
+    "abc_digest": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+    "abc_last_working_state": "506e3058d39a216504d24d6cb85e2ce95ef50f24fb121210948d25b6961f4894",
+    "working_state_is_digest": false,
+    "64_byte_message_blocks": 2,
+    "duplicate_round_labels": {
+      "64": 2
+    }
+  },
+  "random_graph": {
+    "n": 256,
+    "k": 30,
+    "diffusion_time": 1.0,
+    "connected_components": 1,
+    "positive_degrees_discarded": 256,
+    "degree_min": 6.98117609409528e-12,
+    "degree_max": 5.321965205076803e-11,
+    "current_min_eigenvalue": 1.0,
+    "corrected_min_eigenvalue": -6.661338147750939e-16,
+    "current_zero_mode_residual": 1.0,
+    "corrected_zero_mode_residual": 2.0603812498187812e-16,
+    "current_common_rescaling_max_change": 0.5673881539831684,
+    "corrected_common_rescaling_max_change": 2.7755575615628914e-16
+  },
+  "sha_graph": {
+    "n": 256,
+    "k": 30,
+    "diffusion_time": 1.0,
+    "connected_components": 1,
+    "positive_degrees_discarded": 254,
+    "degree_min": 7.0505040121339425e-12,
+    "degree_max": 1.5445479066727875e-10,
+    "current_min_eigenvalue": 0.2419746026870082,
+    "corrected_min_eigenvalue": 8.881784196499386e-16,
+    "current_zero_mode_residual": 0.973617095691045,
+    "corrected_zero_mode_residual": 2.27673782439358e-16,
+    "current_common_rescaling_max_change": 0.658095036682565,
+    "corrected_common_rescaling_max_change": 2.220446049250313e-16
+  },
+  "truncated_heat": {
+    "n_vertices": 256,
+    "retained_modes": 50,
+    "times": [
+      0.0,
+      0.01,
+      0.1,
+      1.0,
+      10.0
+    ],
+    "reported_trace": [
+      50.0,
+      49.724914824470886,
+      47.3196510291873,
+      29.04443921167561,
+      1.3209428137561572
+    ],
+    "full_trace": [
+      256.0,
+      253.4539537951972,
+      231.74791647064444,
+      98.79500443999348,
+      1.3404963569673083
+    ],
+    "relative_trace_underestimate": [
+      0.8046875,
+      0.8038108536880393,
+      0.7958141253227565,
+      0.7060130785325613,
+      0.014586793249769303
+    ]
+  },
+  "curvature_statistic": {
+    "min": -3.7798977533869738,
+    "max": -1.6044444653710777,
+    "all_nonpositive": true,
+    "reason": "Each PSD heat-kernel diagonal is nonincreasing; this ratio cannot establish curvature sign."
+  },
+  "identical_to_degenerate_null": {
+    "description": "Observed spectrum equals every reference spectrum; a valid comparison must not call it anomalous.",
+    "eigenvalue_p": 4.392853499119749e-12,
+    "gap_p": 7.480423059358615e-12,
+    "structure_detected": true,
+    "reported_confidence": 1.0,
+    "anomalous_modes": []
+  },
+  "binary_hyperbolic_embedding": {
+    "pairs": 64,
+    "fixed_radius": 0.9499999999940626,
+    "max_error_vs_function_of_hamming_only": 5.329070518200751e-15
+  },
+  "cube_coordinates": {
+    "integer_bit_to_message_word": {
+      "2": 15,
+      "13": 15,
+      "22": 15,
+      "32": 14,
+      "39": 14,
+      "34": 14,
+      "45": 14
+    },
+    "integer_bit_2_first_influences_state_after_round": 16,
+    "cube_dimension": 7,
+    "fixed_base_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeef0000000000000000",
+    "cube_xor_by_round": {
+      "15": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "16": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "17": [
+        3670490124,
+        0,
+        0,
+        0,
+        2684821504,
+        0,
+        0,
+        0
+      ],
+      "18": [
+        1305906463,
+        3670490124,
+        0,
+        0,
+        4007563096,
+        2684821504,
+        0,
+        0
+      ]
+    },
+    "observable": "First raw-block working state before feed-forward, not the padded two-block hash."
+  },
+  "rank_field_counterexample": {
+    "matrix": [
+      [
+        1,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        1,
+        1
+      ]
+    ],
+    "real_rank": 3,
+    "gf2_rank": 2
+  },
+  "quantile_selection": {
+    "iid_rates": 440,
+    "percentile": 5,
+    "selected_count": 22,
+    "meaning": "The lower 5% selects 22 even without a special population; this is not a null test."
+  },
+  "reduced_round_metadata": {
+    "pairs": 2000,
+    "seed": 42,
+    "actual_input_bits": 440,
+    "code_assumes_bits": 512,
+    "incorrect_pair_bit_labels": 1996,
+    "first_ten_actual": [
+      315,
+      195,
+      29,
+      300,
+      302,
+      366,
+      350,
+      50,
+      349,
+      25
+    ],
+    "first_ten_assumed": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "source": "analysis/reduced_round_analysis.py:80"
+  },
+  "slow_pair_normalization": {
+    "saved_baseline_mean": 6.636234831865011,
+    "saved_baseline_std": 0.05954048150706293,
+    "z_created_by_dividing_baseline_mean_by_sqrt2": -32.645153876968955,
+    "interpretation": "Normalization alone creates this score without any reduction in raw distance; search multiplicity is additional.",
+    "saved_pairs_with_raw_distance_restored": [
+      {
+        "pattern": [
+          1,
+          9
+        ],
+        "saved_z": -34.45110933125217,
+        "raw_distance": 6.484168043383793,
+        "raw_distance_standardized_vs_single_flip": -2.5540066964889916
+      },
+      {
+        "pattern": [
+          5,
+          10
+        ],
+        "saved_z": -34.88964713512871,
+        "raw_distance": 6.447241863779004,
+        "raw_distance_standardized_vs_single_flip": -3.1741928063444975
+      },
+      {
+        "pattern": [
+          1,
+          7
+        ],
+        "saved_z": -33.82224735576292,
+        "raw_distance": 6.5371200809237004,
+        "raw_distance_standardized_vs_single_flip": -1.6646615618913458
+      }
+    ],
+    "qualification": "Restored scores are diagnostics, not valid significance tests; two-bit controls and matched search remain necessary."
+  },
+  "saved_geometric_sections": {
+    "/deep_structural/spectral_clustering": {
+      "n_clusters": 5,
+      "silhouette_score": 0.9952733108711984,
+      "random_silhouette": -0.5739765192643898,
+      "silhouette_ratio": "inf",
+      "calinski_harabasz": 982.0836881786263,
+      "cluster_sizes": [
+        992,
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    "/deep_structural/geodesic_analysis": {
+      "mean_distortion": 2.637454066968608,
+      "std_distortion": 0.538691667137285,
+      "max_distortion": 3.9276465592342475,
+      "min_distortion": 0.9999999999895742,
+      "correlation": 0.28782699660658884,
+      "n_pairs_analyzed": 124750
+    }
+  },
+  "illustrative_ml_intervals": {
+    "random_forest": {
+      "correct": 387,
+      "test_n": 800,
+      "accuracy": 0.48375,
+      "wilson_95_percent": [
+        0.4492811205879559,
+        0.5183741928887288
+      ],
+      "qualification": "Single fixed classifier, independent test observations; not multiplicity-adjusted or a security bound."
+    },
+    "svm": {
+      "correct": 388,
+      "test_n": 800,
+      "accuracy": 0.485,
+      "wilson_95_percent": [
+        0.45052245822058173,
+        0.5196209080655887
+      ],
+      "qualification": "Single fixed classifier, independent test observations; not multiplicity-adjusted or a security bound."
+    }
+  },
+  "matched_clustering_control": {
+    "n": 1000,
+    "k": 50,
+    "modes": 20,
+    "clusters": 5,
+    "sha_input_seed": 42,
+    "random_input_seed": 20260909,
+    "note": "Both datasets receive fitted KMeans. Corrected branch changes only degree normalization; this is not a calibrated significance test.",
+    "sha": {
+      "discarded_positive_degrees": 981,
+      "current": {
+        "min_eigenvalue": 0.3783267761749366,
+        "silhouette": 0.9951946411240209,
+        "cluster_sizes": [
+          992,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      "corrected": {
+        "min_eigenvalue": 0.0,
+        "silhouette": 0.9601853312461573,
+        "cluster_sizes": [
+          992,
+          2,
+          2,
+          2,
+          2
+        ]
+      }
+    },
+    "random": {
+      "discarded_positive_degrees": 975,
+      "current": {
+        "min_eigenvalue": 0.3208836609810823,
+        "silhouette": 0.9955709857675298,
+        "cluster_sizes": [
+          992,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      "corrected": {
+        "min_eigenvalue": 0.0,
+        "silhouette": 0.9635489002229697,
+        "cluster_sizes": [
+          992,
+          2,
+          2,
+          2,
+          2
+        ]
+      }
+    }
+  },
+  "source_sha256": {
+    "src/sha256/core.py": "8d49302e8438c6ac982d73c153a851d3a6a563c80ef3629cb837084e40d342d5",
+    "src/sha256/input_generator.py": "3f704b56ca7c95aa1f9b8839f57b7dd6377846c786c26e957486c21796459ee8",
+    "src/embeddings/euclidean.py": "f99fd8d7f6ae05c82aa896c01582f38609474e1409579281d713a0ad5a1996c6",
+    "src/embeddings/hyperbolic.py": "dc038b8b1c5c62eb7a2d2aa75a1222e50834d0be72f679b50f7e6660e5664661",
+    "src/analysis/laplacian.py": "16be431e6fee6ecad1b31a71188306feae21de65a6514ea9bc2e12d6f46dc6ce",
+    "src/analysis/heat_kernel.py": "41451e49bd8a53e9f43f1e3d09be08afde0bb4d71f3abe923ae7f7bc73f3ec2e",
+    "src/analysis/anomaly.py": "f6772baa08705f9905548b4b92698e712da1dd95449f8704ab58a3beaa89a203",
+    "src/experiments/avalanche.py": "37cab4fa9dcb04b47cfdb54850312163f4f3de67c20dcd6015ae1253505df49a",
+    "analysis/sha256_geometric_analysis.py": "480c35e781cd9fd598d4edc7b896f9c76dd319709c30df656c33612b0b50fd3c",
+    "analysis/sha256_distinguisher_test.py": "11d93f4f4b65afb13f805113d0d50da3a0d51124c116ef3eabf2066d7eec722c",
+    "analysis/slow_bit_analysis.py": "521a1e2c1ce3822a43f27a010c8fc66582f65efee4cae7270a8311e49df26d85",
+    "analysis/cube_attack.py": "8c8fd2f394e66f6bed63df18f99e7c6fd669aededda924ae01cfe02e66f2d06e",
+    "analysis/cube_attack_escalation.py": "2d4eb2091036cf727981a8843dfdca72720342a7019f13bf3d6a673e0aaa1b6b",
+    "analysis/comparative_cube_attack.py": "f3fa3fe43502dbb3e7c9cfecc2682ceb9512943abc2e1ad6dab2ba0cc5e44ec2",
+    "analysis/reduced_round_analysis.py": "9b23af14611b02df11d6d5d5ae2c33687e33d51491ea89b210ed90f127e379f2",
+    "analysis/sha256_geometric_attacks.py": "7a9bfd6ec7e9c6824da0ad75805309181f81fb28c29b11eaa02cb646159f8391",
+    "attack_results.json": "e95176da97199c66ac8fedb0f4e5421e734a8ac8fd3ce64b1a15bc05fccd3152",
+    "RESULTS.md": "3c29e5719ab2bc95a32ed422b426ca03541c7eea5e07cb13081948f4e152d26f",
+    "visualizations/analysis_results.json": "8e8d75fd1b1d41c6d4a40b27b7d00b94ae5555cebc1e890c712e1663521a04a5",
+    "results/distinguisher_comprehensive.json": "263f340adc46d14a0ec9763b769cbf38e625569e7872f4257d8667baeea848d2",
+    "results/exp1_20251206_144431.json": "fc8457fb51a5d8dedaeeb4a2b207f00b94b317ded2541587365af0ee47aad86e",
+    "review/submission_audit.py": "6ff777c5c54dc897cb74ac0e0a4536eba6891a44c141a61ad2c06e748319330a"
+  }
+}

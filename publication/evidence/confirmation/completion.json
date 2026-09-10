@@ -1,0 +1,26 @@
+{
+  "completed": true,
+  "source_hashes": {
+    "src/__init__.py": "c03a4ee6d241aa2fb7d5757c4d4bbabe5d53a8726f801d46789723ef190916c9",
+    "src/analysis/anomaly.py": "c4a897ff8d9abb8d000195b123ff65e3079b13552a3586afa24b9a4995816cfa",
+    "src/analysis/heat_kernel.py": "09c5fef8e925aa838a97a279a9c5355fd796d3ab072ac2159ffd77a3057817f9",
+    "src/analysis/laplacian.py": "f39cde54721ebf7316f71349fec3c68392d11826831cb668217aa859ba7cb667",
+    "src/analysis/__init__.py": "6a4af85d17eefd0dfe5cc2bfa4e85caf0263ee358be039e635086a7e0bb02e93",
+    "src/embeddings/base.py": "e9b3d27e75e0c363a78588d57530cdaf769b7cdccbb5c0187eedf2468dff046c",
+    "src/embeddings/davis.py": "1cb4ee23a0e78e8f62f2e0c9705ac2a7412d7f95af4473c0837e25e8afcccb60",
+    "src/embeddings/euclidean.py": "f99fd8d7f6ae05c82aa896c01582f38609474e1409579281d713a0ad5a1996c6",
+    "src/embeddings/hyperbolic.py": "dc038b8b1c5c62eb7a2d2aa75a1222e50834d0be72f679b50f7e6660e5664661",
+    "src/embeddings/__init__.py": "e79dcb47bb95bc7569d4874685abd89bce0f7c13bfb883089a7d54b1dd9f3662",
+    "src/experiments/avalanche.py": "8ad1fd33c17cfdeb0ba83324f26b6e193a9d0a4fc3644ebfcf55708b6b1c3fa1",
+    "src/experiments/baseline.py": "4d633a314e14824a22c8b2a0e3874a001d6a234db4eb923af1a85d417fce2f9d",
+    "src/experiments/comparison.py": "090b0240d73e8ef906301df51785b2ec3d3a371adbd751afd15310e1d3e5da5f",
+    "src/experiments/__init__.py": "15743c7dfa477df883ee48413c535c246fb6b3a8dc1ffa1da71f5a74c73d3b29",
+    "src/sha256/batch.py": "ce235f997bdf4ce4492c43691443a0b098773fb51427ca4d60371703bcf90dbb",
+    "src/sha256/core.py": "c97edd6d968cbb78bd8096f8437ca516d9fbf4d7d58b163b6bc3df9dd8966104",
+    "src/sha256/input_generator.py": "3f704b56ca7c95aa1f9b8839f57b7dd6377846c786c26e957486c21796459ee8",
+    "src/sha256/__init__.py": "59a73be69e9f8fad6fc48a3fdf70d01f701c0abf5a409fdeb0cab4df52488545",
+    "src/utils/visualization.py": "b4a3e63c1f1329b7c3fc417b393a377965253b84b2a0b833d491c71cc1ee2843",
+    "src/utils/__init__.py": "655bd5dff10a4b54e15c6d157506e0d51cf3ed8a6129441146bd39b41286f696",
+    "analysis/publication_study.py": "da158a3f994f1a3cdc32246b3023acfe5457de1dd1f7f22539f28ec6a7b18eb6"
+  }
+}

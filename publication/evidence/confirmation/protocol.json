@@ -1,0 +1,34 @@
+{
+  "selection_context": "Followup after initial graph results; h=8 silhouette and detour had negative descriptive intervals.",
+  "primary_metrics": [
+    "h=8 silhouette",
+    "k=10 detour"
+  ],
+  "graph_pairs": 20,
+  "graph_seed_start": 261910,
+  "entry_bases": 256,
+  "entry_distribution": "uniform 64-byte raw blocks, no padding interpretation",
+  "entry_seed": 261410,
+  "entry_words": [
+    0,
+    4,
+    8,
+    12,
+    15
+  ],
+  "entry_offsets": [
+    0,
+    1,
+    2
+  ],
+  "entry_delta": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    8
+  ]
+}

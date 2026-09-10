@@ -1,0 +1,13 @@
+{
+  "context": "Followup to negative detour contrast in two independent groups; no selection on this sample.",
+  "replicates": 20,
+  "points": 512,
+  "k_nonself": 10,
+  "seed_start": 262910,
+  "datasets": [
+    "round64 working state",
+    "SHA256 digest",
+    "PCG64 bits",
+    "MT19937 bits"
+  ]
+}
