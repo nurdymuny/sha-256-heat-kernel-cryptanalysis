@@ -6,7 +6,7 @@ SHA-256 Random Oracle Distinguisher
 THE CRITICAL TEST: Can heat kernel analysis distinguish SHA-256 outputs
 from a true random oracle (CSPRNG)?
 
-If YES → Random oracle assumption is violated. This is a cryptographic break.
+If YES → the tested procedure separates the samples; the audit in review/SHA256_SUBMISSION_REVIEW.md withdrew this script's claims.
 If NO  → The geometric structure is internal only, not observable in outputs.
 
 Methodology:
@@ -311,7 +311,7 @@ def run_distinguisher_experiment(n_samples: int = 500, n_trials: int = 20):
   - Classifier accuracy: {:.1f}%
   - Statistical significance: p = {:.2e}
   
-  This is a cryptographic break. Do not publish without responsible disclosure.
+  Legacy message. This script's claims were withdrawn after audit; see review/SHA256_SUBMISSION_REVIEW.md.
         """.format(best_accuracy * 100, p_value))
     elif best_accuracy > 0.55 and p_value < 0.05:
         print("""
