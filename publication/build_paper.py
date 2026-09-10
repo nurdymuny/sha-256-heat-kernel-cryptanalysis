@@ -88,24 +88,11 @@ for ax,key,title in zip(axes,['accuracy','auc'],['Held-out accuracy','Held-out R
     ax.axhline(.5,color='black',ls=':',lw=.8);ax.set_xticks([0,1],['Random forest','PCA + SVM']);ax.set_title(title);ax.set_ylim(.475,.525);ax.grid(axis='y',alpha=.15)
 save(fig,'digest_classifiers')
 
-rows=[]
-for cohort,data in [('Primary',g),('Confirmation',c)]:
-    for h in ['1.0','8.0']:
-        for metric,label in [('silhouette','Silhouette'),('spectral_gap','Gap')]:
-            v=data['summary'][h][metric]; rows.append(f"{cohort} & {h} & {label} & {v['sha_mean']:.4f} & {v['random_mean']:.4f} & {v['difference']['mean']:+.4f} {ci(v['difference'])} \\\\")
-    v=data['summary']['detour']; rows.append(f"{cohort} & -- & Detour & {v['sha_mean']:.4f} & {v['random_mean']:.4f} & {v['difference']['mean']:+.4f} {ci(v['difference'])} \\\\")
-tablefile('graph_table.tex',rows)
-tablefile('sensitivity_table.tex',[f"{key.replace(' minus ',' -- ')} & {v['mean']:+.5f} & {ci(v)} \\\\" for key,v in z['summary'].items()])
-tablefile('cube_table.tex',[f"{v['round']} & {100*v['target_zero_rate']:.2f} & {100*v['control_zero_rate']:.2f} & {100*v['difference']['mean']:+.2f} & [{100*v['difference']['ci95'][0]:.2f}, {100*v['difference']['ci95'][1]:.2f}] & {v['holm_p']:.3f} \\\\" for v in q['records']])
-tablefile('ml_table.tex',[f"{name.replace('_',' + ')} & {100*v['mean_accuracy']:.3f} & {100*v['range'][0]:.3f}--{100*v['range'][1]:.3f} & {v['mean_auc']:.4f} \\\\" for name,v in m['summary'].items()])
-macros={'HoldoutDifference':f"{a['holdout_selected_minus_others']['mean']:+.3f}",
-        'HoldoutCI':ci(a['holdout_selected_minus_others']), 'SearchDifference':f"{s['target_minus_mean_control']['mean']:+.3f}",
-        'SearchCI':ci(s['target_minus_mean_control']), 'FinalHamming':f"{a['round64_mean_hamming']:.3f}",
-        'RFAccuracy':f"{100*m['summary']['RF']['mean_accuracy']:.3f}", 'SVMAccuracy':f"{100*m['summary']['PCA_SVM']['mean_accuracy']:.3f}"}
-(P/'numbers.tex').write_text('\n'.join('\\newcommand{\\'+k+'}{'+v+'}' for k,v in macros.items())+'\n')
-with (P/'numbers.tex').open('a') as file:
-    for command,filename in [('GraphRows','graph_table.tex'),('SensitivityRows','sensitivity_table.tex'),('CubeRows','cube_table.tex'),('MLRows','ml_table.tex')]:
-        file.write('\\newcommand{\\'+command+'}{%\n'+(P/filename).read_text().rstrip()+'%\n}\n')
+sys.path.insert(0,str(P))
+import derived
+macros,tables=derived.primary_macros(E)
+for name,filename in derived.TABLE_FILES:(P/filename).write_text(derived.table_text(tables[name]),encoding='utf-8')
+(P/'numbers.tex').write_text(derived.render(macros,tables),encoding='utf-8')
 out=ROOT/'output/pdf';out.mkdir(parents=True,exist_ok=True)
 subprocess.run([sys.executable,str(P/'followup_tables.py')],cwd=ROOT,check=True)
 for _ in range(2):

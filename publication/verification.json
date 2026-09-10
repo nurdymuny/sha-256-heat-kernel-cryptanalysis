@@ -16,6 +16,10 @@
     "exact round-one MSB observation in both original partitions",
     "matched search: identical bases and candidate scores, pool membership, per-set means, intervals and counts",
     "matched cubes: identical bases and candidate word sums, indicators, per-set rates, ranges, intervals and whole-word fractions",
-    "uniform-control diagnostics: offset correlations, round-2 rates, ranges and whole-word fractions recomputed"
+    "uniform-control diagnostics: offset correlations, round-2 rates, ranges and whole-word fractions recomputed",
+    "manuscript macros: numbers.tex, followup_numbers.tex and the four table files regenerate identically from the receipts",
+    "graph summaries: means, detour intervals and cluster sizes against labels recomputed",
+    "sensitivity detour: all five means and intervals recomputed from records",
+    "avalanche, search and classifier summary means and ranges recomputed from records"
   ]
 }

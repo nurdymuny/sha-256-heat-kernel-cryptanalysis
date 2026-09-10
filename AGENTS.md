@@ -25,8 +25,8 @@ The public record of one paper: *Heat-Kernel Cryptanalysis of SHA-256: A Geometr
 
 6. **Verification before any claim.** Before saying that something works, passes, reproduces, or is unchanged, run and read the output of:
    ```
-   python -m pytest tests -q                 # expect 42 passed
-   python publication/verify_evidence.py     # expect passed: true, 16 checks
+   python -m pytest tests -q                 # expect 46 passed
+   python publication/verify_evidence.py     # expect passed: true, 20 checks
    ```
    After changing anything that feeds the manuscript:
    ```
@@ -45,9 +45,9 @@ The paper's stance is that a measurement is reported as what it is, with its res
 
 - **Entry timing.** A variable in message word W_j first affects the state at completed round j + 1, and trailing registers are exact delayed copies of leading ones (`b_r = a_{r-1}`, `c_r = a_{r-2}`, `d_r = a_{r-3}`; likewise for `e`). A zero cube sum in a trailing register before or shortly after entry is transport, not algebraic weakness. Always report rounds since entry alongside total rounds.
 
-- **Bit significance.** Early one-bit and cube responses depend strongly on the significance of the flipped position, because carries propagate upward. Any comparison of a candidate position set against controls must use controls matched on significance (see `analysis/publication_matched.py`), and must report the candidate's rank among control sets, not only a paired interval against the control mean. This is how the candidate set's apparent early advantage was shown to be a property of high bits, not of the candidate.
+- **Bit significance.** Early one-bit and cube responses depend strongly on the significance of the flipped position, because carries propagate upward. Any comparison of a candidate position set against controls must use controls matched on significance (see `analysis/publication_matched.py`), and must report both the paired interval against the control mean and the candidate's rank among control sets, with bootstrap bounds on the rank; the rank is descriptive, not an uncertainty interval. This is how the candidate set's early advantage over uniform controls was shown to be largely a property of high bits; its residual round-2 cube contrast against the matched mean is reported as unresolved, not dismissed.
 
-- **Reference probabilities.** A "one half" reference for a cube zero rate is meaningless at early rounds, where every set is far from one half. Report the control range and treat candidate-versus-one-half tests as describing the round, not the candidate.
+- **Reference probabilities.** A "one half" reference for a cube zero rate does not establish candidate specificity at early rounds, where the average control rate is itself far from one half and individual sets range widely. Report the control range, and never use a candidate-versus-one-half adjustment to dismiss a candidate-versus-control interval; they test different hypotheses.
 
 - **Saturated regime.** The whole state saturates about six rounds after a variable enters. Tests placed at rounds where every position has saturated (the original round-24 selection, cubes at rounds 8 to 24) are controls, and their null results must be described as expected by construction, not as discoveries.
 
@@ -70,9 +70,10 @@ Follow the pattern of `analysis/publication_matched.py`:
 
 ```
 publication/sha256_measurement.tex   manuscript (macros only, no literal results)
+publication/derived.py               every macro and table row, computed from the receipts
 publication/build_paper.py           primary tables, figures, macros, pdflatex
 publication/followup_tables.py       follow-up and matched tables, macros, Figure 5
-publication/verify_evidence.py       16 checks over every receipt
+publication/verify_evidence.py       20 checks over every receipt and the macro files
 publication/make_release.py          tests + verifier + archives + manifest + RESULTS.md
 publication/evidence/                receipts (immutable)
 publication/repro_source/            byte-exact primary-run source (immutable)
@@ -80,6 +81,6 @@ publication/release/                 PDF, arXiv source, reproducibility archive,
 analysis/publication_*.py            the five runners (hash-locked except confirmation and sensitivity)
 analysis/*.py (others)               December 2025 exploratory scripts, superseded; not used by the paper
 src/                                 SHA-256 cores, graph and heat-kernel code
-tests/                               42 tests
+tests/                               46 tests
 review/                              audit trail and frozen snapshots (immutable)
 ```

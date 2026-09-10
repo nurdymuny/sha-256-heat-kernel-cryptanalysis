@@ -2,7 +2,7 @@
 
 This guide takes you from a clone to an independent check of every number in the paper. The minimum path (steps 1 to 3) takes about five minutes and needs only Python. Rebuilding the PDF (step 4) needs `pdflatex`. Re-running experiments from scratch (step 5) takes a few minutes more.
 
-Nothing in the paper is typed by hand. Every number enters the manuscript through macros that `publication/build_paper.py` and `publication/followup_tables.py` generate from the receipts under `publication/evidence/`, and `publication/verify_evidence.py` recomputes each receipt's summary from its raw arrays. So a reviewer can check the chain at three points: the raw arrays, the summaries, and the manuscript macros.
+Every measured quantity in the paper enters through macros that `publication/derived.py` computes from the receipts under `publication/evidence/`; design constants such as sample sizes and rounds are typed. `publication/verify_evidence.py` recomputes each receipt's summaries from its raw arrays and regenerates both macro files and the four table files, requiring byte equality with the files on disk. So a reviewer can check the chain at three points: the raw arrays, the summaries, and the manuscript macros.
 
 ## 1. Clone and install
 
@@ -25,7 +25,7 @@ The repository stores every file byte-exactly (`.gitattributes` sets `* -text`).
 python -m pytest tests -q
 ```
 
-Expected: `42 passed`. The tests establish that the primitive is SHA-256 (FIPS 180-4 vectors and `hashlib` agreement at padding boundaries up to 128 bytes), that the vectorized raw-block compression used for every measurement matches the scalar reference round by round, that input coordinates are placed where the paper says (MSB-first within each byte, word index = bit // 32), that a variable in W15 cannot influence the state before round 16, that the graph normalization keeps tiny positive degrees and is scale invariant, that full heat traces obey the truncation bound, that the legacy anomaly detector no longer rejects an exact match to its own null, that no continuum curvature is inferred, and that the follow-up and matched-control constructions are what the paper describes.
+Expected: `46 passed`. The tests establish that the primitive is SHA-256 (FIPS 180-4 vectors and `hashlib` agreement at padding boundaries up to 128 bytes), that the vectorized raw-block compression used for every measurement matches the scalar reference round by round, that input coordinates are placed where the paper says (MSB-first within each byte, word index = bit // 32), that a variable in W15 cannot influence the state before round 16, that the graph normalization keeps tiny positive degrees and is scale invariant, that full heat traces obey the truncation bound, that the legacy anomaly detector no longer rejects an exact match to its own null, that no continuum curvature is inferred, that the follow-up and matched-control constructions are what the paper describes, and that the bootstrap interval, Holm and rank-bootstrap helpers agree with hand-computed cases.
 
 ## 3. Run the verifier (about ten seconds)
 
@@ -33,7 +33,7 @@ Expected: `42 passed`. The tests establish that the primitive is SHA-256 (FIPS 1
 python publication/verify_evidence.py
 ```
 
-Expected: a JSON block with `"passed": true` and sixteen check names. The verifier reads only `publication/evidence/` and recomputes, from the raw `.npz` arrays and saved spectra:
+Expected: a JSON block with `"passed": true` and 20 check names. The verifier reads only `publication/evidence/` and the generated macro files, and recomputes, from the raw `.npz` arrays and saved spectra:
 
 - every eigenvalue set (512 modes, zero mode, ordering), every heat trace, and every graph interval;
 - the frozen discovery selection and the held-out difference from the avalanche arrays;
@@ -44,7 +44,11 @@ Expected: a JSON block with `"passed": true` and sixteen check names. The verifi
 - the 100-pair detour replication, seed range and all five intervals;
 - the exact round-one MSB observation on every base of both original partitions;
 - the matched-control family: identical bases and candidate arrays to the follow-up, pool membership, per-set means and rates, intervals and counts, and the uniform-control diagnostics;
-- the SHA-256 hash of every source file that a receipt records, against the file as stored.
+- the SHA-256 hash of every source file that a receipt records, against the file as stored;
+- both macro files and the four table files, regenerated from the receipts through `publication/derived.py` and required to match byte for byte, which covers the heat-trace, early-coordinate, noise-floor, rank-bootstrap and cluster-size numbers that appear only in the manuscript;
+- the graph summary means, the primary, confirmation and sensitivity detour intervals, cluster sizes against saved labels, and the avalanche, search and classifier summary means and ranges.
+
+What it does not do: it does not re-run eigensolvers, k-means or classifier training (it checks the saved spectra's zero mode, ordering and count, and recomputes everything downstream of the saved arrays), and its bootstrap and Holm routines are the study's own, from `analysis/publication_study.py`, unit-tested in `tests/test_publication_stats.py`. It therefore establishes consistency between arrays, receipts and manuscript, not an independent re-implementation of those two routines.
 
 It also rewrites `publication/verification.json`; a clean checkout shows no diff afterwards.
 
@@ -74,7 +78,7 @@ Every runner refuses to overwrite an existing receipt directory, so point it at 
 
 The primary study must be run from `publication/repro_source/`, which is the byte-exact snapshot of the source that produced the shipped receipts. The confirmation and sensitivity runners write to fixed paths and refuse to overwrite, hence the copy-and-delete pattern.
 
-Everything except the graph spectra is integer arithmetic on seeded inputs and reproduces bit for bit. To confirm:
+The intervention, search and cube arrays are integer arithmetic on seeded inputs and reproduce bit for bit under the stated implementation; graph statistics, detour ratios, classifier fits and bootstrap summaries involve floating-point operations and may differ in the last digits across platforms. To confirm the integer arrays:
 
 ```python
 import numpy as np
@@ -106,7 +110,7 @@ Graph statistics (silhouettes, spectral gaps, heat traces, detour ratios) depend
 | Entry control (Figure 6 left and centre) | figure only | `evidence/confirmation/entry.json`, `entry.npz` | `build_paper.py` |
 | Classifier table and Figure 7 | `\MLRows`, `\RFAccuracy`, `\SVMAccuracy` | `evidence/ml.json`, `evidence/ml_*.npz` | `build_paper.py` |
 
-Each receipt directory also holds `protocol.json` (saved before execution), `environment.json` (versions and source hashes), `completion.json` (timestamps), and the frozen selection or control sets.
+Each receipt directory holds `protocol.json`, saved before execution, and the frozen selection or control sets. The primary, follow-up and matched directories also hold `environment.json` (versions and source hashes) and `completion.json`; the confirmation directory records its source hashes in `completion.json`; the sensitivity directory holds only its protocol and receipt.
 
 ## 7. Three claims you can check by hand in a minute
 
@@ -118,7 +122,7 @@ a = np.load('publication/evidence/avalanche.npz')
 print(set(a['discovery'][:, 0, 0]), set(a['holdout'][:, 0, 0]))     # {2} {2}
 ```
 
-The round-24 selection sits at the noise floor: the spread of the 440 per-position means equals what sampling alone produces, and discovery does not predict holdout.
+At round 24 the spread of the 440 per-position means is consistent with sampling-scale variation, and discovery does not predict holdout; the tested selection resolves no persistent lower-distance advantage.
 
 ```python
 r24 = list(a['rounds']).index(24); h = a['holdout'][:, :, r24].astype(float); d = a['discovery'][:, :, r24]
@@ -126,7 +130,7 @@ print(h.mean(0).std(ddof=1), np.sqrt(((h - h.mean(1, keepdims=True)).var(0, ddof
 print(np.corrcoef(d.mean(0), h.mean(0))[0, 1])                                                              # 0.018
 ```
 
-The candidate set is ordinary within its significance class at round 2: 19 of 40 matched control sets have a cube zero rate at or above the candidate's.
+The candidate's round-2 cube rate is above the matched-control mean (+4.35 points [+1.8, +6.8]) but not exceptional among individual matched sets: 19 of 40 have a zero rate at or above the candidate's, with base-bootstrap bounds 13 to 26 on that count.
 
 ```python
 import json
@@ -144,4 +148,4 @@ print(q['round'], q['candidate_zero_rate'], sum(r >= q['candidate_zero_rate'] fo
 
 ## 9. What is and is not being claimed
 
-The paper reports bounded negative results for the tested procedures, one reproducible early-round position effect with an exact algebraic explanation at round 1, and the finding that a previously proposed candidate set has no advantage once controls are matched on bit significance. It does not claim an attack, a distinguisher, a security proof, intrinsic curvature, or a topological model. `review/` documents the December 2025 claims that preceded this work and why they were withdrawn.
+The paper reports bounded negative results for the tested procedures, one reproducible early-round position effect with an exact algebraic explanation at round 1, and the finding that a previously proposed candidate set's advantage over uniform controls is largely an effect of bit significance, with its residual round-2 cube contrast reported as unresolved. It does not claim an attack, a distinguisher, a security proof, intrinsic curvature, or a topological model. `review/` documents the December 2025 claims that preceded this work and why they were withdrawn.

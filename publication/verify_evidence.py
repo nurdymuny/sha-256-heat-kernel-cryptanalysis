@@ -139,6 +139,40 @@ same(rates,ud['cube_round2_control_zero_rates']);same(np.corrcoef(rates,above)[0
 same([rates.min(),rates.max()],ud['cube_round2_control_zero_rate_range'])
 same((fq['word_sums'][0,:,j2,0]==0).mean(),ud['cube_round2_whole_word_a_zero']['candidate']);same((fq['word_sums'][1:,:,j2,0]==0).mean(),ud['cube_round2_whole_word_a_zero']['uniform_controls'])
 checks.append('uniform-control diagnostics: offset correlations, round-2 rates, ranges and whole-word fractions recomputed')
+# Manuscript macros and table files regenerate identically from the receipts.
+sys.path.insert(0,str(ROOT/'publication'));import derived
+pm,pt=derived.primary_macros(E);assert derived.render(pm,pt)==(ROOT/'publication/numbers.tex').read_text(encoding='utf-8')
+for name,filename in derived.TABLE_FILES:assert (ROOT/'publication'/filename).read_text(encoding='utf-8')==derived.table_text(pt[name]),filename
+fm,ft=derived.followup_macros(E);assert derived.render(fm,ft)==(ROOT/'publication/followup_numbers.tex').read_text(encoding='utf-8')
+checks.append('manuscript macros: numbers.tex, followup_numbers.tex and the four table files regenerate identically from the receipts')
+# Graph summaries: means, detour intervals, and cluster sizes against saved labels.
+for path in ['graphs.json','confirmation/graphs.json']:
+    data=read(path)
+    for h in ['1.0','8.0']:
+        for metric in ['silhouette','spectral_gap']:
+            v=data['summary'][h][metric];sha=[r['kernels'][h]['sha'][metric] for r in data['records']];rnd=[r['kernels'][h]['random'][metric] for r in data['records']]
+            same(np.mean(sha),v['sha_mean']);same(np.mean(rnd),v['random_mean']);same(np.mean(np.array(sha)-np.array(rnd)),v['difference']['mean'])
+        for r in data['records']:
+            for label in ['sha','random']:
+                v=r['kernels'][h][label];np.testing.assert_array_equal(np.bincount(v['labels'],minlength=5),v['cluster_sizes'])
+    dif=[r['sha_detour']-r['random_detour'] for r in data['records']];v=data['summary']['detour']
+    same(np.mean([r['sha_detour'] for r in data['records']]),v['sha_mean']);same(np.mean([r['random_detour'] for r in data['records']]),v['random_mean'])
+    same(np.mean(dif),v['difference']['mean']);same(interval(dif)['ci95'],v['difference']['ci95'])
+checks.append('graph summaries: means, detour intervals and cluster sizes against labels recomputed')
+zs=read('sensitivity/detour.json')
+for k,v in zs['summary'].items():
+    left,right=k.split(' minus ');d=[r[left]-r[right] for r in zs['records']];same(np.mean(d),v['mean']);same(interval(d)['ci95'],v['ci95'])
+checks.append('sensitivity detour: all five means and intervals recomputed from records')
+aj0=read('avalanche.json');sel=a['selected'];rest=np.setdiff1d(np.arange(440),sel)
+same((a['holdout'][:,sel,23].mean(axis=1)-a['holdout'][:,rest,23].mean(axis=1)).mean(),aj0['holdout_selected_minus_others']['mean'])
+w0s=sel[sel<32];w0r=np.setdiff1d(np.arange(32),w0s)
+same(interval(a['holdout'][:,w0s,23].mean(axis=1)-a['holdout'][:,w0r,23].mean(axis=1))['ci95'],aj0['holdout_word0_selected_minus_others']['ci95'])
+sj0=read('search.json');same(s['target'].mean(),sj0['target_mean_min_hamming']);same(s['controls'].mean(),sj0['control_mean_min_hamming'])
+same((s['target']-s['controls'].mean(axis=0)).mean(),sj0['target_minus_mean_control']['mean'])
+for name in ['RF','PCA_SVM']:
+    accs=[r['models'][name]['accuracy'] for r in ml['records']];aucs=[r['models'][name]['auc'] for r in ml['records']]
+    same(np.mean(accs),ml['summary'][name]['mean_accuracy']);same([min(accs),max(accs)],ml['summary'][name]['range']);same(np.mean(aucs),ml['summary'][name]['mean_auc'])
+checks.append('avalanche, search and classifier summary means and ranges recomputed from records')
 result={'passed':True,'checks':checks}
 (ROOT/'publication/verification.json').write_text(json.dumps(result,indent=2)+'\n')
 print(json.dumps(result,indent=2))
